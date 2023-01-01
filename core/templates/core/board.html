@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+    [<a href="{% url 'index' %}">Index</a>]
+    <h2>/{{ board.ln }}/ - {{ board.name }}</h2>
+    {% if board.description %}
+        <p>{{ board.decription }}</p>
+    {% endif %}
+    <strong>[New Thread]</strong>
+    <form id="newthreadform" method="post">{% csrf_token %}
+        <table class="newthreadformtable" id="newthreadformtable">
+            <tbody>
+                <tr data-type="Name">
+                    <td>Name</td>
+                    <td><input type="text" id="author" name="author" placeholder="Anonymous"></td>
+                </tr>
+                <tr data-type="Subject">
+                    <td>Subject</td>
+                    <td><input type="text" id="subject" name="subject"></td>
+                </tr>
+                <tr data-type="Comment">
+                    <td>Comment</td>
+                    <td><textarea id="text" name="text" rows="4" cols="40"></textarea></td>
+                </tr>
+                <tr data-type="Verification">
+                    <td>Verification</td>
+                    <td><input type="text" id="verification" name="verification" placeholder="2+2="></td>
+                </tr>
+                <tr data-type="File">
+                    <td>File</td>
+                    <td><input id="file" name="file" type="file"></td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- <input type="submit" value="Submit"> -->
+        [<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]
+    </form>
+    <h3>Threads</h3>
+    {% for thread in threads %}
+        <article class="thread" id="thread{{ thread.pk }}" data-id="thread{{ thread.pk }}">
+        <p><strong>{{ thread.author }}</strong> posted at {{ thread.timestamp }} No.{{ thread.pk }}</p>
+        <p>{{ thread.text | safe }}</p>
+        <p>[Replies: {{ thread.post_set.all | length | add:1 }}] [<a href="{% url 'thread' board.ln thread.pk %}">Visit</a>]</p>
+    {% empty %}
+        <p>No threads yet.</p>
+    {% endfor %}
+{% endblock content %}
