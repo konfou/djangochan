@@ -1,0 +1,21 @@
+{% load bbcode_tags %}
+<div class="row reply" id="{{ post.pk }}">
+    <div class="row headline">
+        <p><span class="author">{{ post.author }}</span>
+            {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
+            posted at {{ post.timestamp }}
+            <span class="pk">#{{ post.pk }}</span></p>
+    </div>
+    <div class="row content">
+        {% if post.image %}
+            <div class="one-third column">
+                <span class="image"><a href="{{ post.image.url}}"><img src="{{ post.image.url }}"></a></span>
+            </div>
+            <div class="two-thirds column">
+                <span class="post-text"><p>{% bbcode post.text %}</p></span>
+            </div>
+        {% else %}
+            <span class="post-text"><p>{% bbcode post.text %}</p></span>
+        {% endif %}
+    </div>
+</div>

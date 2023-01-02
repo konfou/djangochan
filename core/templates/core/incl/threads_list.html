@@ -1,12 +1,5 @@
-{% extends 'base.html' %}
 {% load bbcode_tags %}
-{% block header %}
-    <title>djangochan:/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}</title>
-{% endblock header %}
-{% block content %}
-    <h2>/{{ board.ln}}/ - {{ board.name }}</a></h2>
-    <div id="top"></div>
-    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>]
+{% for thread, replies in posts.items %}
     <div class="thread">
         <div class="row op" id="{{ thread.pk }}">
             <div class="row headline">
@@ -14,6 +7,7 @@
                     <span class="author">{{ thread.author }}</span>
                     {% if thread.tripcode %}<span class='tripcode'>!{{ thread.tripcode }}</span>{% endif %}
                     posted at {{ thread.timestamp }}
+                    {% if not board %}on <span class="board">/{{ thread.board.ln }}/</span>{% endif %}
                     <span class="pk">#{{ thread.pk }}</span></p>
             </div>
             <div class="row content">
@@ -28,18 +22,12 @@
                     <span class="post-text"><p>{% bbcode thread.text %}</p></span>
                 {% endif %}
             </div>
+            <p>[Replies: {{ thread.post_set.all | length }}] [<a href="{% url 'thread' thread.board.ln thread.pk %}">Visit</a>]</p>
         </div>
         {% for post in replies %}
             {% include 'core/incl/reply.html' %}
         {% endfor %}
     </div>
-    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>
-    <div id="bottom"></div>
-    <form id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
-        <strong>[New Reply]</strong>
-        {{form.as_table }}
-        <!-- <input type="submit" value="Submit"> -->
-        <br>
-        [<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]
-    </form>
-{% endblock content %}
+{% empty %}
+    <p>No threads yet.</p>
+{% endfor %}
