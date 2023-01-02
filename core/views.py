@@ -13,6 +13,15 @@ class IndexView(ListView):
     template_name = 'core/index.html'
     context_object_name = 'boards'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(IndexView, self).get_context_data(*args, **kwargs)
+        threads = Post.objects.filter(
+            thread__isnull=True).order_by('-bump')[:5]
+        context['posts'] = {thread: thread.post_set.order_by(
+            '-timestamp')[:3][::-1] for thread in threads}
+        return context
+
+
 class BoardView(FormMixin, DetailView):
     model = Board
     template_name = 'core/board.html'
@@ -24,22 +33,28 @@ class BoardView(FormMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(BoardView, self).get_context_data(*args, **kwargs)
         board = kwargs['object']
-        context['threads'] = board.post_set.filter(thread__isnull=True).order_by('-bump')
+        threads = board.post_set.filter(thread__isnull=True).order_by('-bump')
+        context['posts'] = {thread: thread.post_set.order_by(
+            '-timestamp')[:3][::-1] for thread in threads}
+        context['form'] = NewThreadForm()
         return context
 
-    # TODO: Utilize Django's forms
+    # TODO: redirect to newly created thread
+    def get_success_url(self):
+        return reverse('board', kwargs={'board': self.object.ln})
+
     def post(self, request, *args, **kwargs):
-        data = request.POST
-        if int(data['verification']) == 4:
-            new_post = Post()
-            new_post.board = Board.objects.get(ln=kwargs['board'])
-            new_post.author = data['author']
-            new_post.text = data['text']
-            new_post.save()
+        self.object = self.get_object()
+        form = self.get_form()
+        form.instance.board = Board.objects.get(ln=kwargs['board'])
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
-            return HttpResponseRedirect(reverse('thread', kwargs={'board': kwargs['board'], 'thread': new_post.pk}))
-
-        return HttpResponseRedirect(reverse('board', kwargs={'board': kwargs['board']}))
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 class ThreadView(FormMixin, DetailView):
     model = Post
@@ -52,18 +67,23 @@ class ThreadView(FormMixin, DetailView):
         context = super(ThreadView, self).get_context_data(*args, **kwargs)
         thread = kwargs['object']
         context['board'] = thread.board
-        context['posts'] = thread.post_set.order_by('-timestamp')
+        context['posts'] = thread.post_set.order_by('timestamp')
+        context['form'] = NewReplyForm()
         return context
 
-    # TODO: Utilize Django's forms
-    def post(self, request, *args, **kwargs):
-        data = request.POST
-        if int(data['verification']) == 4:
-            new_post = Post()
-            new_post.board = Board.objects.get(ln=kwargs['board'])
-            new_post.thread = Post.objects.get(pk=kwargs['thread'])
-            new_post.author = data['author']
-            new_post.text = data['text']
-            new_post.save()
+    def get_success_url(self):
+        return reverse('thread', kwargs={'board': self.object.board, 'thread': self.object.pk})
 
-        return HttpResponseRedirect(reverse('thread', kwargs={'board': kwargs['board'], 'thread': kwargs['thread']}))
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        form.instance.board = Board.objects.get(ln=kwargs['board'])
+        form.instance.thread = Post.objects.get(pk=kwargs['thread'])
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)

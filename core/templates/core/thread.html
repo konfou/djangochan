@@ -1,40 +1,31 @@
 {% extends 'base.html' %}
+{% block header %}
+    <title>Djangochan > /{{ board.ln }}/ > {{ thread.subject }}</title>
+{% endblock header %}
 {% block content %}
     <h2>/{{ board.ln}}/ - {{ board.name }}</a></h2>
-    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#button">Bottom</a>]
     <div id="top"></div>
-    <article class="thread" id="thread{{ thread.pk }}" data-id="thread{{ thread.pk }}">
-    <p><strong>{{ thread.author }}</strong> posted at {{ thread.timestamp }} No.<a href="#{{ thread.pk }}">{{ thread.pk }}</a></p>
-    <p>{{ thread.text | safe }}</p>
-    {% for post in posts %}
-        <p><strong>{{ post.author }}</strong> posted at {{ post.timestamp }} No.<a href="#{{ post.pk }}">{{ post.pk }}</a></p>
-        <p>{{ post.text | safe }}</p>
-    {% endfor %}
-    <div id="bottom"></div>
+    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#button">Bottom</a>]
+    <div id="thread">
+        <p><strong>{{ thread.author }}</strong> posted at {{ thread.timestamp }} <a href="#{{ thread.pk }}">#{{ thread.pk }}</a></p>
+        <p>{{ thread.text | safe }}</p>
+        {% for post in posts %}
+            <div id="{{ post.pk }}">
+                <p><strong>{{ post.author }}</strong> posted at {{ post.timestamp }} <a href="#{{ post.pk }}">#{{ post.pk }}</a></p>
+                {% if post.image %}
+                    <a hred="{{ post.image.url}}"><img src="{{ post.image.thumbnails.small.url }}"></a>
+                {% endif %}
+                <p>{{ post.text | safe }}</p>
+            </div>
+        {% endfor %}
+    </div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>
-    <strong>[New Reply]</strong>
+    <div id="bottom"></div>
     <form id="newreplyform" method="post">{% csrf_token %}
-        <table class="newreplyformtable" id="newreplyformtable">
-            <tbody>
-                <tr data-type="Name">
-                    <td>Name</td>
-                    <td><input type="text" id="author" name="author" placeholder="Anonymous"></td>
-                </tr>
-                <tr data-type="Comment">
-                    <td>Comment</td>
-                    <td><textarea id="text" name="text" rows="4" cols="40"></textarea></td>
-                </tr>
-                <tr data-type="Verification">
-                    <td>Verification</td>
-                    <td><input type="text" id="verification" name="verification" placeholder="2+2="></td>
-                </tr>
-                <tr data-type="File">
-                    <td>File</td>
-                    <td><input id="file" name="file" type="file"></td>
-                </tr>
-            </tbody>
-        </table>
+        <strong>[New Reply]</strong>
+        {{form.as_table }}
         <!-- <input type="submit" value="Submit"> -->
+        <br>
         [<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]
     </form>
 {% endblock content %}

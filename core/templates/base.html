@@ -2,11 +2,21 @@
 <!doctype html>
 <html lang="en">
     <head>
+        {% block header %}
+        {% endblock %}
+        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+        <link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
         <link rel="stylesheet" href="{% static 'css/sakura.css' %}">
+        <link rel="stylesheet" href="{% static 'css/mylittlechan.css' %}">
+        <link rel="shortcut icon" type="image/ico" href="{% static 'favicon.ico' %}"/>
     </head>
     <body>
-    <h1>Djangochan</h1>
-    {% block content %}
-    {% endblock %}
+        <div class="container">
+            <section class="header">
+                <h1 class="title">Djangochan</h1>
+            </section>
+            {% block content %}
+            {% endblock %}
+        </div>
     </body>
 </html>

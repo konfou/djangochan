@@ -1,11 +1,37 @@
 {% extends 'base.html' %}
+{% block header %}
+    <title>Djangochan > Index</title>
+{% endblock header %}
 {% block content %}
-    <h2>Boards</h2>
-    <ul>
-        {% for board in boards %}
-            <li><a href="{% url 'board' board.ln %}">/{{ board.ln}}/ - {{ board.name }}</a></li>
+    <div class="boards-section" id="boards">
+        <h2 clas="boards-header">Boards</h2>
+        <ul>
+            {% for board in boards %}
+                <li><a href="{% url 'board' board.ln %}">/{{ board.ln}}/ - {{ board.name }}</a></li>
+            {% empty %}
+                <li>No boards yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="threads-section" id="threads">
+        <h2 class="threads-header">Latest active threads</h2>
+        {% for thread, replies in posts.items %}
+            <div class="row">
+                <p><strong>{{ thread.author }}</strong> posted at {{ thread.timestamp }} on /{{ thread.board.ln }}/ #{{ thread.pk }}</p>
+                <p>{{ thread.text | safe }}</p>
+                <p>[Replies: {{ thread.post_set.all | length | add:1 }}] [<a href="{% url 'thread' thread.board.ln thread.pk %}">Visit</a>]</p>
+            </div>
+            {% for post in replies %}
+                <div class="row">
+                    <div class="one-third column"></div>
+                    <div class="two-third column">
+                        <p><strong>{{ post.author }}</strong> posted at {{ post.timestamp }} #{{ post.pk }}</p>
+                        <p>{{ post.text | safe }}</p>
+                    </div>
+                </div>
+            {% endfor %}
         {% empty %}
-            <li>No boards yet.</li>
+            <p>No threads yet.</p>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock content %}
