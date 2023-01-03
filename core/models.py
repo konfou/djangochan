@@ -38,6 +38,7 @@ class Post(models.Model):
         upload_to=img_thumb_path, verbose_name='Thumbnail', blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     bump = models.DateTimeField(auto_now=True)
+    sticky = models.BooleanField(null=True, blank=True)
     cookie = models.CharField(max_length=32, null=True, blank=True)
 
     def save(self, *args, **kwargs):

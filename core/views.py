@@ -1,6 +1,7 @@
 import hashlib
 from random import randint
 
+from django.db.models import Case, When
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
@@ -34,7 +35,8 @@ class BoardView(FormMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(BoardView, self).get_context_data(*args, **kwargs)
         board = kwargs['object']
-        threads = board.post_set.filter(thread__isnull=True).order_by('-bump')
+        threads = board.post_set.filter(
+            thread__isnull=True).order_by(Case(When(sticky=True, then=0), default=1), '-bump')
         context['posts'] = {thread: thread.post_set.order_by(
             '-timestamp')[:3][::-1] for thread in threads}
         return context
@@ -53,8 +55,9 @@ class BoardView(FormMixin, DetailView):
 
     def form_valid(self, form):
         if '#' in form.instance.author:
-            usr, pwd = form.instance.author.rsplit('#')
-            hashpwd = hashlib.sha256(pwd.encode('utf-8')).hexdigest()[:10]
+            author = form.instance.author
+            usr, pwd = author.rsplit('#')
+            hashpwd = hashlib.sha256(author.encode('utf-8')).hexdigest()[:10]
             form.instance.author = usr
             form.instance.tripcode = hashpwd
 
@@ -90,8 +93,9 @@ class ThreadView(FormMixin, DetailView):
 
     def form_valid(self, form):
         if '#' in form.instance.author:
-            usr, pwd = form.instance.author.rsplit('#')
-            hashpwd = hashlib.sha256(pwd.encode('utf-8')).hexdigest()[:10]
+            author = form.instance.author
+            usr, pwd = author.rsplit('#')
+            hashpwd = hashlib.sha256(author.encode('utf-8')).hexdigest()[:10]
             form.instance.author = usr
             form.instance.tripcode = hashpwd
 
