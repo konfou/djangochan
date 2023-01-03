@@ -2,8 +2,9 @@
 <!doctype html>
 <html lang="en">
     <head>
-        {% block header %}
-        {% endblock %}
+        {% block header %}{% endblock %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
         <link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
         <link rel="stylesheet" href="{% static 'css/sakura.css' %}">
@@ -12,12 +13,12 @@
     </head>
     <body>
         <div class="container">
-            <section class="header">
-                <h1 class="title">Djangochan</h1>
+            <div class="header">
+                [<a href="{% url 'index' %}">Index</a>]
+                <h1 class="title">djangochan</h1>
                 <p>{% include 'site_description.html' %}</p>
-            </section>
-            {% block content %}
-            {% endblock %}
+            </div>
+            {% block content %}{% endblock %}
         </div>
     </body>
 </html>

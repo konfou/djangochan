@@ -4,7 +4,9 @@
     <title>djangochan:/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}</title>
 {% endblock header %}
 {% block content %}
-    <h2>/{{ board.ln}}/ - {{ board.name }}</a></h2>
+    <div id="board">
+        <h2 class="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
+    </div>
     <div id="top"></div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>]
     <div class="thread">

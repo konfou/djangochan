@@ -4,11 +4,12 @@
 {% endblock header %}
 {% block content %}
     <div id="board">
-        [<a href="{% url 'index' %}">Index</a>]
         <h2 class="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
         {% if board.description %}
             <p>{{ board.decription }}</p>
         {% endif %}
+    </div>
+    <div class="threads-section" id="threads">
         <form id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
             <strong>[New Thread]</strong>
             {{ form.as_table }}
@@ -16,9 +17,7 @@
             <br>
             [<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]
         </form>
-    </div>
-    <div class="threads-section" id="threads">
-        <h3 ckass="threads-header">Threads</h3>
+        <h3 class="threads-header">Threads</h3>
         {% include 'core/incl/threads_list.html' %}
     </div>
 {% endblock content %}
