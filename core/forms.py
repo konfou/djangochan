@@ -1,12 +1,14 @@
-from django.forms import ModelForm
+from django import forms
+from django.conf import settings
 from simplemathcaptcha.fields import MathCaptchaField
 from simplemathcaptcha.widgets import MathCaptchaWidget
 
 from .models import Post
 
 
-class NewThreadForm(ModelForm):
-    captcha = MathCaptchaField(widget=MathCaptchaWidget(question_tmpl="%(num1)i %(operator)s %(num2)i = "))
+class NewThreadForm(forms.ModelForm):
+    if settings.CAPTCHA:
+        captcha = MathCaptchaField(widget=MathCaptchaWidget(question_tmpl="%(num1)i %(operator)s %(num2)i = "))
 
     class Meta:
         model = Post
@@ -15,11 +17,16 @@ class NewThreadForm(ModelForm):
         ]
 
 
-class NewReplyForm(ModelForm):
-    captcha = MathCaptchaField(widget=MathCaptchaWidget(question_tmpl="%(num1)i %(operator)s %(num2)i = "))
+class NewReplyForm(forms.ModelForm):
+    if settings.CAPTCHA:
+        captcha = MathCaptchaField(widget=MathCaptchaWidget(question_tmpl="%(num1)i %(operator)s %(num2)i = "))
+
+    options = forms.CharField(label='Options', required=False, empty_value=None)
 
     class Meta:
         model = Post
         fields = [
             'author', 'text', 'image'
         ]
+
+    field_order = ['author', 'options']
