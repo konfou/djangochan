@@ -1,6 +1,3 @@
-import hashlib
-from random import randint
-
 from django.db.models import Case, When
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -54,13 +51,6 @@ class BoardView(FormMixin, DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        if '#' in form.instance.author:
-            author = form.instance.author
-            usr, pwd = author.rsplit('#')
-            hashpwd = hashlib.sha256(author.encode('utf-8')).hexdigest()[:10]
-            form.instance.author = usr
-            form.instance.tripcode = hashpwd
-
         form.save()
         return super().form_valid(form)
 
@@ -92,12 +82,9 @@ class ThreadView(FormMixin, DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        if '#' in form.instance.author:
-            author = form.instance.author
-            usr, pwd = author.rsplit('#')
-            hashpwd = hashlib.sha256(author.encode('utf-8')).hexdigest()[:10]
-            form.instance.author = usr
-            form.instance.tripcode = hashpwd
+        myargs = {'sage': False}
+        if form.cleaned_data['options'] == "sage":
+            myargs['sage'] = True
 
-        form.save()
+        form.save(myargs)
         return super().form_valid(form)
