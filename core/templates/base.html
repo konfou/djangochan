@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css">
         <link rel="stylesheet" href="{% static 'css/mylittlechan.css' %}">
         <link rel="shortcut icon" type="image/ico" href="{% static 'favicon.ico' %}"/>
+        <script type="text/javascript" src="{% static 'js/mylittlechan.js' %}" defer></script>
     </head>
     <body>
         <div class="container">
@@ -20,5 +21,6 @@
             </div>
             {% block content %}{% endblock %}
         </div>
+        <div id="viewimage" onclick="this.style.display='none';"></div>
     </body>
 </html>

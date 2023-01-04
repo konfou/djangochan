@@ -60,11 +60,25 @@ textarea {
 }
 
 .spoiler{
-  background-color: black;
-  color: transparent;
+    background-color: black;
+    color: transparent;
 }
 
 .spoiler:hover{
-  background-color: inherit;
-  color: inherit;
+    background-color: inherit;
+    color: inherit;
+}
+
+#viewimage {
+    display: none;
+    position: fixed;
+    z-index: 314;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    background-size: contain;
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+    background-color: black;
 }
