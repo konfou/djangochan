@@ -20,6 +20,16 @@ textarea {
     margin: 5px 5px 5px 5px;
 }
 
+/* site types */
+
+#site-title {
+}
+
+#site-description {
+    text-align: right;
+    color: #092e20;
+}
+
 /* post types */
 
 .op {

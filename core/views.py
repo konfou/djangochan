@@ -8,6 +8,9 @@ from .models import Board, Post
 from .forms import NewThreadForm, NewReplyForm
 
 
+# TODO: simplify, form_valid same to both Board/ThreadView
+# TODO: simplify, option checking in success_url same to both Board/ThreadView
+
 class IndexView(ListView):
     model = Board
     template_name = 'core/index.html'
@@ -39,6 +42,14 @@ class BoardView(FormMixin, DetailView):
         return context
 
     def get_success_url(self):
+        # options is list that contains a string that has space separated keywords
+        opts = self.request.POST.getlist('options')
+        if opts != '':
+            # doing it this way in case other options are added
+            opts = opts[0].split()
+            if 'nanako' in opts:
+                return reverse('board', kwargs={'board': self.object.ln})
+
         return reverse('thread', kwargs={'board': self.object.ln, 'thread': Post.objects.latest('pk').pk})
 
     def post(self, request, *args, **kwargs):
@@ -51,7 +62,15 @@ class BoardView(FormMixin, DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        form.save()
+        # options contains a string that has space separated keywords
+        # if no options were provided is None
+        opts = form.cleaned_data['options']
+        if opts is not None:
+            opts = opts.split()
+            form.save({x: True for x in opts})
+        else:
+            form.save()
+
         return super().form_valid(form)
 
 class ThreadView(FormMixin, DetailView):
@@ -69,6 +88,14 @@ class ThreadView(FormMixin, DetailView):
         return context
 
     def get_success_url(self):
+        # options is list that contains a string that has space separated keywords
+        opts = self.request.POST.getlist('options')
+        if opts != '':
+            # doing it this way in case other options are added
+            opts = opts[0].split()
+            if 'nanako' in opts:
+                return reverse('board', kwargs={'board': self.object.board})
+
         return reverse('thread', kwargs={'board': self.object.board, 'thread': self.object.pk})
 
     def post(self, request, *args, **kwargs):
@@ -82,9 +109,13 @@ class ThreadView(FormMixin, DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        myargs = {'sage': False}
-        if form.cleaned_data['options'] == "sage":
-            myargs['sage'] = True
+        # options contains a string that has space separated keywords
+        # if no options were provided is None
+        opts = form.cleaned_data['options']
+        if opts is not None:
+            opts = opts.split()
+            form.save({x: True for x in opts})
+        else:
+            form.save()
 
-        form.save(myargs)
         return super().form_valid(form)
