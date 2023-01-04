@@ -1,0 +1,54 @@
+html {
+    background-image: url("/static/waifu.png");
+    background-attachment: fixed;
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+body {
+    background: var(--sidebar-bg);
+    color: var(--body-fg);
+    font-family: sans-serif;
+}
+
+textarea {
+    height: auto;
+}
+
+.row {
+    margin: 5px 5px 5px 5px;
+}
+
+/* post types */
+
+.op {
+    background: lightgray;
+}
+
+/* post headline elements */
+
+.subject {
+    color: darkblue;
+}
+
+.author {
+    color: darkgreen;
+}
+
+.tripcode {
+    color: green;
+}
+
+.pk {
+    color: darkgrey;
+}
+
+.image {
+    height: 100%;
+    width: auto;
+}
+
+.greentext {
+    color: green;
+}
