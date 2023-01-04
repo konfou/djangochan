@@ -16,5 +16,5 @@ def post_render(post):
     post = re.sub(r'&gt;&gt;(\d+)', "<a href=\"#\g<1>\">&gt;&gt;\g<1></a>", post)
     post = re.sub(urlregex, "<a href=\"\g<0>\">\g<0></a>", post)
     # XXX: looks terrible
-    post = '<br />'.join(re.sub(r'^(&gt;.+)$', "<span class=\"greentext\">\g<1></span>", line) for line in post.split('<br />'))
+    post = '<br />'.join(re.sub(r'^(&gt;.+)$', "<span class=\"quotetext\">\g<1></span>", line) for line in post.split('<br />'))
     return mark_safe(post)
