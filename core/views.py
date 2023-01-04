@@ -1,6 +1,4 @@
 from django.db.models import Case, When
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
@@ -34,8 +32,7 @@ class BoardView(FormMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(BoardView, self).get_context_data(*args, **kwargs)
-        board = kwargs['object']
-        threads = board.post_set.filter(
+        threads = self.object.post_set.filter(
             thread__isnull=True).order_by(Case(When(sticky=True, then=0), default=1), '-bump')
         context['posts'] = {thread: thread.post_set.order_by(
             '-timestamp')[:3][::-1] for thread in threads}
@@ -48,14 +45,14 @@ class BoardView(FormMixin, DetailView):
             # doing it this way in case other options are added
             opts = opts[0].split()
             if 'nanako' in opts:
-                return reverse('board', kwargs={'board': self.object.ln})
-
-        return reverse('thread', kwargs={'board': self.object.ln, 'thread': Post.objects.latest('pk').pk})
+                return self.object.get_absolute_url()
+        #else
+        return Post.objects.last().get_absolute_url()
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        form.instance.board = Board.objects.get(ln=kwargs['board'])
+        form.instance.board = self.object
         if form.is_valid():
             return self.form_valid(form)
         else:
@@ -82,9 +79,8 @@ class ThreadView(FormMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ThreadView, self).get_context_data(*args, **kwargs)
-        thread = kwargs['object']
-        context['board'] = thread.board
-        context['replies'] = thread.post_set.order_by('timestamp')
+        context['board'] = self.object.board
+        context['replies'] = self.object.post_set.order_by('timestamp')
         return context
 
     def get_success_url(self):
@@ -94,15 +90,15 @@ class ThreadView(FormMixin, DetailView):
             # doing it this way in case other options are added
             opts = opts[0].split()
             if 'nanako' in opts:
-                return reverse('board', kwargs={'board': self.object.board})
-
-        return reverse('thread', kwargs={'board': self.object.board, 'thread': self.object.pk})
+                return self.object.board.get_absolute_url()
+        #else
+        return Post.objects.last().get_absolute_url()
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        form.instance.board = Board.objects.get(ln=kwargs['board'])
-        form.instance.thread = Post.objects.get(pk=kwargs['thread'])
+        form.instance.board = self.object.board
+        form.instance.thread = self.object
         if form.is_valid():
             return self.form_valid(form)
         else:

@@ -16,6 +16,7 @@ def img_thumb_path(instance, filename):
 
 
 class Board(models.Model):
+    # info
     name = models.CharField(max_length=16)
     ln = models.SlugField(max_length=8)
     description = models.TextField(blank=True)
@@ -27,22 +28,24 @@ class Board(models.Model):
         return reverse('board', kwargs={'board': self.ln})
 
 class Post(models.Model):
+    # server generated
     board = models.ForeignKey(
         'Board', on_delete=models.CASCADE, null=False, blank=False)
     thread = models.ForeignKey(
         'self', on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    bump = models.DateTimeField()
+    cookie = models.CharField(max_length=32, null=True, blank=True)
+    # user provided
     author = models.CharField(max_length=32, default='Anonymous')
     tripcode = models.CharField(max_length=10, null=True, blank=True)
     subject = models.CharField(max_length=64, null=True, blank=True)
-    text = models.TextField()
+    text = models.TextField(null=True, blank=True)
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
     thumb = models.ImageField(
         upload_to=img_thumb_path, verbose_name='Thumbnail', blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    bump = models.DateTimeField()
-    sticky = models.BooleanField(null=True, blank=True)
-    cookie = models.CharField(max_length=32, null=True, blank=True)
+    sticky = models.BooleanField(blank=True, default=False)
 
     def save(self, *args, **kwargs):
         # if post is reply won't modify post.thread
@@ -81,4 +84,7 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('thread', kwargs={'board': self.board, 'thread': self.pk})
+        if not self.thread:
+            return reverse('thread', kwargs={'board': self.board, 'thread': self.pk})
+        else:
+            return self.thread.get_absolute_url() + f'#{self.pk}'
