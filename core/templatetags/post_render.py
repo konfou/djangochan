@@ -5,7 +5,11 @@ from django.utils.safestring import mark_safe
 from precise_bbcode.bbcode import get_parser
 
 register = template.Library()
-bbcode_parser = get_parser()
+
+try:
+    bbcode_parser = get_parser()
+except:
+    exit
 
 # from https://stackoverflow.com/a/11725011
 urlregex = r'(^(https?:\/\/)?[0-9a-zA-Z]+\.[-_0-9a-zA-Z]+\.[0-9a-zA-Z]+$)'
