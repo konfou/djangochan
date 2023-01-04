@@ -1,4 +1,5 @@
-{% load bbcode_tags %}
+{% load post_render %}
+{% load thumbnail %}
 {% for thread, replies in posts.items %}
     <div class="thread">
         <div class="row op" id="{{ thread.pk }}">
@@ -12,14 +13,16 @@
             </div>
             <div class="row content">
                 {% if thread.image %}
+                    {% thumbnail thread.image "x300" as im %}
                     <div class="one-third column">
-                        <span class="image"><a href="{{ thread.image.url}}"><img src="{{ thread.image.url }}"></a></span>
+                        <span class="image"><a href="{{ thread.image.url}}"><img src="{{ im.url }}"></a></span>
                     </div>
                     <div class="two-thirds column">
-                        <span class="post-text"><p>{% bbcode thread.text %}</p></span>
+                        <span class="post-text"><p>{% post_render thread.text %}</p></span>
                     </div>
+                    {% endthumbnail %}
                 {% else %}
-                    <span class="post-text"><p>{% bbcode thread.text %}</p></span>
+                    <span class="post-text"><p>{% post_render thread.text %}</p></span>
                 {% endif %}
                 <p>[Replies: {{ thread.post_set.all | length }}] [<a href="{% url 'thread' thread.board.ln thread.pk %}">Visit</a>]</p>
             </div>

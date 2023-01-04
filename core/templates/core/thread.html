@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% load bbcode_tags %}
+{% load post_render %}
+{% load thumbnail %}
 {% block header %}
     <title>djangochan:/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}</title>
 {% endblock header %}
@@ -20,14 +21,16 @@
             </div>
             <div class="row content">
                 {% if thread.image %}
+                    {% thumbnail thread.image "x300" as im %}
                     <div class="one-third column">
-                        <span class="image"><a href="{{ thread.image.url}}"><img src="{{ thread.image.url }}"></a></span>
+                        <span class="image"><a href="{{ thread.image.url}}"><img src="{{ im.url }}"></a></span>
                     </div>
                     <div class="two-thirds column">
-                        <span class="post-text"><p>{% bbcode thread.text %}</p></span>
+                        <span class="post-text"><p>{% post_render thread.text %}</p></span>
                     </div>
+                    {% endthumbnail %}
                 {% else %}
-                    <span class="post-text"><p>{% bbcode thread.text %}</p></span>
+                    <span class="post-text"><p>{% post_render thread.text %}</p></span>
                 {% endif %}
             </div>
         </div>

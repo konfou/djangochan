@@ -1,4 +1,5 @@
-{% load bbcode_tags %}
+{% load post_render %}
+{% load thumbnail %}
 <div class="row reply" id="{{ post.pk }}">
     <div class="row headline">
         <p><span class="author">{{ post.author }}</span>
@@ -8,14 +9,16 @@
     </div>
     <div class="row content">
         {% if post.image %}
+            {% thumbnail thread.image "x300" as im %}
             <div class="one-third column">
-                <span class="image"><a href="{{ post.image.url}}"><img src="{{ post.image.url }}"></a></span>
+                <span class="image"><a href="{{ post.image.url}}"><img src="{{ im.url }}"></a></span>
             </div>
             <div class="two-thirds column">
-                <span class="post-text"><p>{% bbcode post.text %}</p></span>
+                <span class="post-text"><p>{% post_render post.text %}</p></span>
             </div>
+           {% endthumbnail %}
         {% else %}
-            <span class="post-text"><p>{% bbcode post.text %}</p></span>
+            <span class="post-text"><p>{% post_render post.text %}</p></span>
         {% endif %}
     </div>
 </div>
