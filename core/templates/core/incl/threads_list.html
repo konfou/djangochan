@@ -24,8 +24,8 @@
                 {% else %}
                     <span class="post-text"><p>{% post_render thread.text %}</p></span>
                 {% endif %}
-                <p>[Replies: {{ thread.post_set.all | length }}] [<a href="{% url 'thread' thread.board.ln thread.pk %}">Visit</a>]</p>
             </div>
+            <p>[Replies: {{ thread.post_set.all | length }}] [<a href="{% url 'thread' thread.board.ln thread.pk %}">Visit</a>]</p>
         </div>
         {% for post in replies %}
             {% include 'core/incl/reply.html' %}

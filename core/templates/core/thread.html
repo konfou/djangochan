@@ -6,7 +6,7 @@
 {% endblock header %}
 {% block content %}
     <div id="board">
-        <h2 class="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
+        <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
     </div>
     <div id="top"></div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>]

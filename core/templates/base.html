@@ -1,8 +1,10 @@
 {% load static %}
+{% load settings_value %}
 <!doctype html>
 <html lang="en">
     <head>
         {% block header %}{% endblock %}
+        <meta name="description" content="{% settings_value 'SITE_DESCRIPTION' %}">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://unpkg.com/normalize.css/normalize.css">
@@ -16,8 +18,12 @@
         <div class="container">
             <div class="header">
                 [<a href="{% url 'index' %}">Index</a>]
-                <h1 class="title">djangochan</h1>
-                <p>{% include 'site_description.html' %}</p>
+                <!-- TODO: add those in database -->
+                {% if request.resolver_match.view_name == 'index' %}
+                    <h1 id="site-title">{% settings_value 'SITE_TITLE' %}</h1>
+                    <p id="site-description">{% settings_value 'SITE_DESCRIPTION' %}</p>
+                    <p id="site-issue">{% include 'site_issue.html' %}</p>
+                {% endif %}
             </div>
             {% block content %}{% endblock %}
         </div>
