@@ -7,8 +7,6 @@ html {
 }
 
 body {
-    background: var(--sidebar-bg);
-    color: var(--body-fg);
     font-family: sans-serif;
 }
 
@@ -27,7 +25,7 @@ textarea {
 
 #site-description {
     text-align: right;
-    color: #092e20;
+    color: #092e20; /* django green */
 }
 
 /* post types */

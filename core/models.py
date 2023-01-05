@@ -7,12 +7,7 @@ from django.utils import timezone
 
 def img_path(instance, filename):
     ext = filename.rsplit('.')[-1]
-    print(instance)
     return 'img/{}.{}'.format(instance.pk, ext)
-
-def img_thumb_path(instance, filename):
-    ext = filename.rsplit('.')[-1]
-    return 'img/{}_s.{}'.format(instance.pk, ext)
 
 
 class Board(models.Model):
@@ -20,6 +15,13 @@ class Board(models.Model):
     name = models.CharField(max_length=16)
     ln = models.SlugField(max_length=8)
     description = models.TextField(blank=True)
+    # settings
+    max_threads = models.IntegerField(null=True, default=100)
+    thread_bump_limit = models.IntegerField(null=True, default=500)
+    thread_img_limit = models.IntegerField(null=True, default=150)
+    archive_retention_time = models.TimeField(null=True)
+    op_requires_img = models.BooleanField(default=False)
+    textboard = models.BooleanField(default=False)
 
     def __str__(self):
         return self.ln
@@ -35,17 +37,16 @@ class Post(models.Model):
         'self', on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     bump = models.DateTimeField()
-    cookie = models.CharField(max_length=32, null=True, blank=True)
+    closed = models.BooleanField(default=False)
+    cookie = models.CharField(max_length=32, blank=True)
     # user provided
     author = models.CharField(max_length=32, default='Anonymous')
-    tripcode = models.CharField(max_length=10, null=True, blank=True)
-    subject = models.CharField(max_length=64, null=True, blank=True)
-    text = models.TextField(null=True, blank=True)
+    tripcode = models.CharField(max_length=10, blank=True)
+    subject = models.CharField(max_length=64, blank=True)
+    text = models.TextField(blank=True)
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
-    thumb = models.ImageField(
-        upload_to=img_thumb_path, verbose_name='Thumbnail', blank=True)
-    sticky = models.BooleanField(blank=True, default=False)
+    sticky = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # if post is reply won't modify post.thread
@@ -87,4 +88,4 @@ class Post(models.Model):
         if not self.thread:
             return reverse('thread', kwargs={'board': self.board, 'thread': self.pk})
         else:
-            return self.thread.get_absolute_url() + f'#{self.pk}'
+            return self.thread.get_absolute_url() + f'#p{self.pk}'

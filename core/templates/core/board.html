@@ -10,13 +10,15 @@
         {% endif %}
     </div>
     <div id="threads">
-        <form id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
-            <strong>[New Thread]</strong>
-            {{ form.as_table }}
-            <!-- <input type="submit" value="Submit"> -->
-            <br>
-            [<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]
-        </form>
+        <details>
+            <summary>[New Thread]</summary>
+            <form class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
+                {{ form.as_p }}
+                <!-- <input type="submit" value="Submit"> -->
+                <br>
+                [<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]
+            </form>
+        </details>
         <h3 id="threads-header">Threads</h3>
         {% include 'core/incl/threads_list.html' %}
     </div>

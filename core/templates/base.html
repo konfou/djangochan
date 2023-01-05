@@ -17,9 +17,10 @@
     <body>
         <div class="container">
             <div class="header">
-                [<a href="{% url 'index' %}">Index</a>]
-                <!-- TODO: add those in database -->
-                {% if request.resolver_match.view_name == 'index' %}
+                {% if request.resolver_match.view_name != 'index' %}
+                    [<a href="{% url 'index' %}">Index</a>]
+                {% else %}
+                    <!-- TODO: add those in database -->
                     <h1 id="site-title">{% settings_value 'SITE_TITLE' %}</h1>
                     <p id="site-description">{% settings_value 'SITE_DESCRIPTION' %}</p>
                     <p id="site-issue">{% include 'site_issue.html' %}</p>

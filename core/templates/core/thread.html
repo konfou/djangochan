@@ -11,7 +11,7 @@
     <div id="top"></div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>]
     <div class="thread">
-        <div class="row op" id="{{ thread.pk }}">
+        <div class="row op" id="p{{ thread.pk }}">
             <div class="row headline">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
                     <span class="author">{{ thread.author }}</span>
@@ -25,12 +25,12 @@
                     <div class="one-third column">
                         <span class="image"><a href="{{ thread.image.url}}"><img src="{{ im.url }}"></a></span>
                     </div>
-                    <div class="two-thirds column">
-                        <span class="post-text"><p>{% post_render thread.text %}</p></span>
-                    </div>
                     {% endthumbnail %}
+                    <div class="two-thirds column">
+                        <span class="post-text"><p>{% post_render board.ln thread.text %}</p></span>
+                    </div>
                 {% else %}
-                    <span class="post-text"><p>{% post_render thread.text %}</p></span>
+                    <span class="post-text"><p>{% post_render board.ln thread.text %}</p></span>
                 {% endif %}
             </div>
         </div>
@@ -40,11 +40,13 @@
     </div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>
     <div id="bottom"></div>
-    <form id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
-        <strong>[New Reply]</strong>
-        {{form.as_table }}
-        <!-- <input type="submit" value="Submit"> -->
-        <br>
-        [<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]
-    </form>
+    <details>
+        <summary>[New Reply]</summary>
+        <form class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <!-- <input type="submit" value="Submit"> -->
+            <br>
+            [<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]
+        </form>
+    </details>
 {% endblock content %}
