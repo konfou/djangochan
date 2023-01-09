@@ -1,5 +1,6 @@
 import hashlib
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -29,6 +30,7 @@ class Board(models.Model):
     def get_absolute_url(self):
         return reverse('board', kwargs={'board': self.ln})
 
+
 class Post(models.Model):
     # server generated
     board = models.ForeignKey(
@@ -48,26 +50,30 @@ class Post(models.Model):
         upload_to=img_path, verbose_name='Image', blank=True)
     sticky = models.BooleanField(default=False)
 
+    def clean(self):
+        if self.board.textboard:
+            if not self.text:
+                raise ValidationError('Submit text.')
+            # XXX: in this case form shouldn't provide image input in first place
+            if self.image:
+                raise ValidationError('Board is text only.')
+        else:
+            if not (self.text or self.image):
+                raise ValidationError('Submit text or/and upload image.')
+        if self.thread:  # is reply
+            thread = self.thread
+            if thread.closed:
+                raise ValidationError('Thread is closed.')
+            if self.image and thread.post_set.filter(~models.Q(image='')).count() >= self.board.thread_img_limit:
+                raise ValidationError('Image limit has been reached.')
+        else:  # is thread
+            if not self.image and self.board.op_requires_img:
+                raise ValidationError('OP required to have an image.')
+
     def save(self, *args, **kwargs):
         # if post is reply won't modify post.thread
         # in contrast to having auto_now option in DateTimeField
         self.bump = timezone.now()
-
-        if '#' in self.author:
-            usr, pwd = self.author.rsplit('#')
-            hashpwd = hashlib.sha256(self.author.encode('utf-8')).hexdigest()[:10]
-            self.author = usr
-            self.tripcode = hashpwd
-
-        # posts do not have a pk until saved to db
-        # thus instance.pk returns None breaking img_path()
-        if self.pk is None:
-            img = self.image
-            self.image = None
-            super(Post, self).save(*args, **kwargs)
-            self.image = img
-            # on upload image will automatically be renamed
-            # based on img_path() as originally intended
 
         # if post is reply will modify post.thread
         if self.thread:
@@ -81,6 +87,23 @@ class Post(models.Model):
                 thread.bump = self.timestamp
 
             thread.save()
+
+        # posts do not have a pk until saved to db
+        # thus instance.pk returns None breaking img_path()
+        if self.pk is None:
+            img = self.image
+            self.image = None
+            super(Post, self).save(*args, **kwargs)
+            self.image = img
+            # on upload image will automatically be renamed
+            # based on img_path() as originally intended
+
+        if '#' in self.author:
+            usr, pwd = self.author.rsplit('#')
+            hashpwd = hashlib.sha256(
+                self.author.encode('utf-8')).hexdigest()[:10]
+            self.author = usr
+            self.tripcode = hashpwd
 
         super(Post, self).save(*args, **kwargs)
 

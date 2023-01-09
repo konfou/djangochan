@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db.models import Case, When
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
@@ -21,6 +22,7 @@ class IndexView(ListView):
         context['posts'] = {thread: thread.post_set.order_by(
             '-timestamp')[:3][::-1] for thread in threads}
         return context
+
 
 class BoardView(FormMixin, DetailView):
     model = Board
@@ -46,7 +48,7 @@ class BoardView(FormMixin, DetailView):
             opts = opts[0].split()
             if 'nanako' in opts:
                 return self.object.get_absolute_url()
-        #else
+        # else
         return Post.objects.last().get_absolute_url()
 
     def post(self, request, *args, **kwargs):
@@ -70,6 +72,7 @@ class BoardView(FormMixin, DetailView):
 
         return super().form_valid(form)
 
+
 class ThreadView(FormMixin, DetailView):
     model = Post
     context_object_name = 'thread'
@@ -91,7 +94,7 @@ class ThreadView(FormMixin, DetailView):
             opts = opts[0].split()
             if 'nanako' in opts:
                 return self.object.board.get_absolute_url()
-        #else
+        # else
         return Post.objects.last().get_absolute_url()
 
     def post(self, request, *args, **kwargs):
@@ -107,8 +110,13 @@ class ThreadView(FormMixin, DetailView):
     def form_valid(self, form):
         # options contains a string that has space separated keywords
         # if no options were provided is None
-        opts = form.cleaned_data['options']
-        if opts is not None:
+        opts = str(form.cleaned_data['options'] or '')
+
+        # XXX: should be moved to either form or model clean()
+        if self.object.post_set.count() > self.object.board.thread_bump_limit:
+            opts += ' sage'
+
+        if opts:
             opts = opts.split()
             form.save({x: True for x in opts})
         else:
