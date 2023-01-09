@@ -9,7 +9,7 @@
         <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
     </div>
     <div id="top"></div>
-    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>]
+    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>] [Replies: {{ thread.post_set.all.count }}]
     <div class="thread">
         <div class="row op" id="p{{ thread.pk }}">
             <div class="row headline">
