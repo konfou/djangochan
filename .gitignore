@@ -175,8 +175,6 @@ cython_debug/
 
 # Static files
 static/
-#  contains files that are normally served from cdn
-staticlocal/
 
 # Generate when needed
 migrations/
