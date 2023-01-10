@@ -61,6 +61,7 @@ class BoardView(FormMixin, DetailView):
         form.save()
         return super().form_valid(form)
 
+
 class ThreadView(FormMixin, DetailView):
     model = Post
     template_name = 'core/thread.html'
@@ -98,7 +99,7 @@ class ThreadView(FormMixin, DetailView):
     def form_valid(self, form):
         # options contains a string that has space separated keywords
         # if no options were provided is None
-        opts = str(form.cleaned_data['options'] or '').split()
+        opts = form.cleaned_data['options'].split()
 
         if self.object.post_set.count() > self.object.board.thread_bump_limit:
             opts.append('sage')

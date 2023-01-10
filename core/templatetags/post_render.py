@@ -37,6 +37,7 @@ def post_link(match):
 
     return f"&gt;&gt;{post_id}"
 
+
 def board_link(match):
     board_ln = match.group(1)
     if Board.objects.filter(ln=board_ln).exists():
@@ -46,6 +47,7 @@ def board_link(match):
         ret = f"&gt;&gt;&gt;/{board_ln}/"
 
     return ret
+
 
 def cross_board_post_link(match):
     board_ln, post_id = match.group(1, 2)
@@ -59,7 +61,7 @@ def cross_board_post_link(match):
 
 @register.simple_tag
 def post_render(board, post):
-    global BOARD # phew, global
+    global BOARD  # phew, global
     BOARD = board
     post = bbcode_parser.render(post)
     post = re.sub(r'&gt;&gt;(\d+)', post_link, post)

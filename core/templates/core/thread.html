@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% load post_render %}
 {% load thumbnail %}
-{% block header %}
-    <title>djangochan:/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}</title>
-{% endblock header %}
+{% block title %}/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}{% endblock title %}
 {% block content %}
     <div id="board">
         <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
@@ -40,12 +38,11 @@
     </div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>
     <div id="bottom"></div>
-    <details>
+    <details open>
         <summary>[New Reply]</summary>
         <form class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
             {{ form.as_p }}
             <!-- <input type="submit" value="Submit"> -->
-            <br>
             [<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]
         </form>
     </details>

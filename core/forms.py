@@ -12,7 +12,7 @@ class NewThreadForm(forms.ModelForm):
             question_tmpl="%(num1)i %(operator)s %(num2)i = "))
 
     options = forms.CharField(
-        label='Options', required=False, empty_value=None)
+        label='Options', required=False, empty_value='')
 
     class Meta:
         model = Post

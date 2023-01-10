@@ -1,10 +1,9 @@
 {% load static %}
-{% load settings_value %}
 <!doctype html>
 <html lang="en">
     <head>
-        {% block header %}{% endblock %}
-        <meta name="description" content="{% settings_value 'SITE_DESCRIPTION' %}">
+        <title>{{ site.profile.title }}:{% block title %}{% endblock %}</title>
+        <meta name="description" content="{{ site.profile.description }}">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://unpkg.com/normalize.css/normalize.css">
@@ -20,10 +19,9 @@
                 {% if request.resolver_match.view_name != 'index' %}
                     [<a href="{% url 'index' %}">Index</a>]
                 {% else %}
-                    <!-- TODO: add those in database -->
-                    <h1 id="site-title">{% settings_value 'SITE_TITLE' %}</h1>
-                    <p id="site-description">{% settings_value 'SITE_DESCRIPTION' %}</p>
-                    <p id="site-issue">{% include 'site_issue.html' %}</p>
+                    <h1 id="site-title">{{ site.profile.title }}</h1>
+                    <p id="site-description">{{ site.profile.description }}</p>
+                    <p id="site-issue">{{ site.profile.issue }}</p>
                 {% endif %}
             </div>
             {% block content %}{% endblock %}

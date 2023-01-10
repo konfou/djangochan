@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
-{% block header %}
-    <title>djangochan:/{{ board.ln }}/</title>
-{% endblock header %}
+{% block title %}/{{ board.ln }}/{% endblock title %}
 {% block content %}
     <div id="board">
         <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
@@ -15,7 +13,6 @@
             <form class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
                 {{ form.as_p }}
                 <!-- <input type="submit" value="Submit"> -->
-                <br>
                 [<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]
             </form>
         </details>

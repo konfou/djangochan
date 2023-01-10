@@ -1,14 +1,27 @@
 import hashlib
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from siteprofile.models import SiteProfileBase
 
 
 def img_path(instance, filename):
     ext = filename.rsplit('.')[-1]
     return 'img/{}.{}'.format(instance.pk, ext)
+
+
+# for siteprofile app
+class SiteProfile(SiteProfileBase):
+    # site-wide settings
+    title = models.CharField(max_length=64, default=getattr(
+        settings, 'SITE_TITLE', 'djangochan'))
+    description = models.CharField(max_length=128, default=getattr(
+        settings, 'SITE_DESCRIPTION', 'django-powered imageboard'))
+    issue = models.CharField(max_length=512, default=getattr(
+        settings, 'SITE_ISSUE', 'A message shown on index.'))
 
 
 class Board(models.Model):
@@ -21,8 +34,10 @@ class Board(models.Model):
     thread_bump_limit = models.IntegerField(null=True, default=500)
     thread_img_limit = models.IntegerField(null=True, default=150)
     archive_retention_time = models.TimeField(null=True)
+    # bool settings
     op_requires_img = models.BooleanField(default=False)
     textboard = models.BooleanField(default=False)
+    closed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.ln
@@ -38,9 +53,10 @@ class Post(models.Model):
     thread = models.ForeignKey(
         'self', on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    # thread
     bump = models.DateTimeField(null=True)
     closed = models.BooleanField(default=False)
-    cookie = models.CharField(max_length=32, blank=True)
+    sticky = models.BooleanField(default=False)
     # user provided
     author = models.CharField(max_length=32, default='Anonymous')
     tripcode = models.CharField(max_length=10, blank=True)
@@ -48,7 +64,8 @@ class Post(models.Model):
     text = models.TextField(blank=True)
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
-    sticky = models.BooleanField(default=False)
+    # TODO: use field to allow post/image deletion
+    cookie = models.CharField(max_length=32, blank=True)
 
     def __init__(self, *args, **kwargs):
         self.sage = False
