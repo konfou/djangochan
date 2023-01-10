@@ -7,9 +7,6 @@ from .models import Board, Post
 from .forms import NewThreadForm, NewReplyForm
 
 
-# TODO: simplify, form_valid same to both Board/ThreadView
-# TODO: simplify, option checking in success_url same to both Board/ThreadView
-
 class IndexView(ListView):
     model = Board
     template_name = 'core/index.html'
@@ -61,22 +58,13 @@ class BoardView(FormMixin, DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        # options contains a string that has space separated keywords
-        # if no options were provided is None
-        opts = form.cleaned_data['options']
-        if opts is not None:
-            opts = opts.split()
-            form.save({x: True for x in opts})
-        else:
-            form.save()
-
+        form.save()
         return super().form_valid(form)
-
 
 class ThreadView(FormMixin, DetailView):
     model = Post
-    context_object_name = 'thread'
     template_name = 'core/thread.html'
+    context_object_name = 'thread'
     pk_url_kwarg = 'thread'
     form_class = NewReplyForm
 
@@ -110,16 +98,10 @@ class ThreadView(FormMixin, DetailView):
     def form_valid(self, form):
         # options contains a string that has space separated keywords
         # if no options were provided is None
-        opts = str(form.cleaned_data['options'] or '')
+        opts = str(form.cleaned_data['options'] or '').split()
 
-        # XXX: should be moved to either form or model clean()
         if self.object.post_set.count() > self.object.board.thread_bump_limit:
-            opts += ' sage'
+            opts.append('sage')
 
-        if opts:
-            opts = opts.split()
-            form.save({x: True for x in opts})
-        else:
-            form.save()
-
+        form.save(opts=opts)
         return super().form_valid(form)

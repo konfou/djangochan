@@ -38,7 +38,7 @@ class Post(models.Model):
     thread = models.ForeignKey(
         'self', on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    bump = models.DateTimeField()
+    bump = models.DateTimeField(null=True)
     closed = models.BooleanField(default=False)
     cookie = models.CharField(max_length=32, blank=True)
     # user provided
@@ -49,6 +49,10 @@ class Post(models.Model):
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
     sticky = models.BooleanField(default=False)
+
+    def __init__(self, *args, **kwargs):
+        self.sage = False
+        super(Post, self).__init__(*args, **kwargs)
 
     def clean(self):
         if self.board.textboard:
@@ -71,25 +75,9 @@ class Post(models.Model):
                 raise ValidationError('OP required to have an image.')
 
     def save(self, *args, **kwargs):
-        # if post is reply won't modify post.thread
-        # in contrast to having auto_now option in DateTimeField
-        self.bump = timezone.now()
-
-        # if post is reply will modify post.thread
-        if self.thread:
-            # required to first save an instance
-            # changes directly on self.thread won't be saved
-            thread = self.thread
-            if kwargs.get('sage', False):
-                # bump thread unless sage=True is passed
-                # for consistency use this/latest post.timestamp
-                # rather calling timezone.now() again
-                thread.bump = self.timestamp
-
-            thread.save()
-
-        # posts do not have a pk until saved to db
-        # thus instance.pk returns None breaking img_path()
+        # posts do not have a pk and timestamp until saved to db
+        # thus instance.pk and self.timestamp return None
+        # breaking img_path() and following bump set respectively
         if self.pk is None:
             img = self.image
             self.image = None
@@ -98,6 +86,23 @@ class Post(models.Model):
             # on upload image will automatically be renamed
             # based on img_path() as originally intended
 
+        if self.thread:  # is reply
+            # XXX: maybe let bump be Null for replies
+            self.bump = self.timestamp
+            # required to first save an instance
+            # changes directly on self.thread won't be saved
+            thread = self.thread
+            if not self.sage:
+                # bump thread unless sage is True
+                thread.bump = self.timestamp
+            thread.save()
+        elif not self.bump:
+            # happens during thread creation
+            # but not when thread.save() above is called
+            self.bump = self.timestamp
+
+        # happens only once since afterwards #password
+        # is removed from the author field
         if '#' in self.author:
             usr, pwd = self.author.rsplit('#')
             hashpwd = hashlib.sha256(
