@@ -1,6 +1,8 @@
 {% extends 'boards/base.html' %}
+{% load cache %}
 {% block title %}/{% endblock title %}
 {% block content %}
+    {% cache None boards %}
     <div id="boards">
         <h2 id="boards-header">Boards</h2>
         <ul>
@@ -11,6 +13,7 @@
             {% endfor %}
         </ul>
     </div>
+    {% endcache %}
     <div id="threads">
         <h2 id="threads-header">Latest active threads</h2>
         {% include 'boards/incl/threads_list.html' %}

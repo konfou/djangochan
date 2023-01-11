@@ -13,7 +13,6 @@ Learning Django building an imageboard.
 - cache posts renderings
 - per-board active thread limit, archive oldest bumped ones
 - search engine
-- perhaps json api utilizing django-rest-framework
 
 ## Dependencies
 
@@ -21,6 +20,7 @@ Learning Django building an imageboard.
 - django-environ
 - django-precise-bbcode
 - django-simple-captcha
+- djangorestframework
 - sorl-thumbnail
 
 ## Similar

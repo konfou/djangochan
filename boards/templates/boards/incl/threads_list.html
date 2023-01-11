@@ -1,8 +1,10 @@
+{% load cache %}
 {% load post_render %}
 {% load thumbnail %}
 {% for thread, replies in posts.items %}
     <div class="thread">
         <div class="row op" id="t{{ thread.pk }}">
+            {% cache 500 thread_list_op thread.pk %}
             <div class="row headline">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
                     <span class="author">{{ thread.author }}</span>
@@ -25,10 +27,13 @@
                     <span class="post-text"><p>{% post_render thread.board.ln thread.text %}</p></span>
                 {% endif %}
             </div>
+            {% endcache %}
             <p>[Replies: {{ thread.post_set.all.count }}] [<a href="{% url 'thread' thread.board.ln thread.pk %}">Visit</a>]</p>
         </div>
         {% for post in replies %}
-            {% include 'boards/incl/reply.html' %}
+            {% cache 500 reply post.pk %}
+                {% include 'boards/incl/reply.html' %}
+            {% endcache %}
         {% endfor %}
     </div>
 {% empty %}

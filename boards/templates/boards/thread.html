@@ -1,4 +1,5 @@
 {% extends 'boards/base.html' %}
+{% load cache %}
 {% load post_render %}
 {% load thumbnail %}
 {% block title %}/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}{% endblock title %}
@@ -9,6 +10,7 @@
     <div id="top"></div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>] [Replies: {{ thread.post_set.all.count }}]
     <div class="thread">
+        {% cache 500 thread_op thread.pk %}
         <div class="row op" id="p{{ thread.pk }}">
             <div class="row headline">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
@@ -32,8 +34,11 @@
                 {% endif %}
             </div>
         </div>
+        {% endcache %}
         {% for post in replies %}
-            {% include 'boards/incl/reply.html' %}
+            {% cache 500 reply post.pk %}
+                {% include 'boards/incl/reply.html' %}
+            {% endcache %}
         {% endfor %}
     </div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>
