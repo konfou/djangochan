@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db.models import Case, When
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
@@ -100,9 +99,5 @@ class ThreadView(FormMixin, DetailView):
         # options contains a string that has space separated keywords
         # if no options were provided is None
         opts = form.cleaned_data['options'].split()
-
-        if self.object.post_set.count() > self.object.board.thread_bump_limit:
-            opts.append('sage')
-
         form.save(opts=opts)
         return super().form_valid(form)

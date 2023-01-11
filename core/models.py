@@ -106,21 +106,19 @@ class Post(models.Model):
         if self.thread:  # is reply
             # XXX: maybe let bump be Null for replies
             self.bump = self.timestamp
-            # required to first save an instance
-            # changes directly on self.thread won't be saved
-            thread = self.thread
-            if not self.sage:
-                # bump thread unless sage is True
+            # bump thread unless saged by option or auto
+            if not self.sage and self.thread.post_set.count() <= self.board.thread_bump_limit:
+                # required to first save an instance
+                # changes directly on self.thread won't be saved
+                thread = self.thread
                 thread.bump = self.timestamp
-            thread.save()
+                thread.save()
         elif not self.bump:
             # happens during thread creation
             # but not when thread.save() above is called
             self.bump = self.timestamp
 
-        # happens only once since afterwards #password
-        # is removed from the author field
-        if '#' in self.author:
+        if not self.tripcode and '#' in self.author:
             usr, pwd = self.author.rsplit('#')
             hashpwd = hashlib.sha256(
                 self.author.encode('utf-8')).hexdigest()[:10]
