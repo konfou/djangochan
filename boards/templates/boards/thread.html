@@ -1,4 +1,4 @@
-{% extends 'core/base.html' %}
+{% extends 'boards/base.html' %}
 {% load post_render %}
 {% load thumbnail %}
 {% block title %}/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}{% endblock title %}
@@ -33,7 +33,7 @@
             </div>
         </div>
         {% for post in replies %}
-            {% include 'core/incl/reply.html' %}
+            {% include 'boards/incl/reply.html' %}
         {% endfor %}
     </div>
     [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>

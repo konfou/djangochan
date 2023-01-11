@@ -3,7 +3,7 @@ from django.conf import settings
 from simplemathcaptcha.fields import MathCaptchaField
 from simplemathcaptcha.widgets import MathCaptchaWidget
 
-from .models import Post
+from core.models import Post
 
 
 class NewThreadForm(forms.ModelForm):

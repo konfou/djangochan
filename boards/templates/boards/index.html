@@ -1,4 +1,4 @@
-{% extends 'core/base.html' %}
+{% extends 'boards/base.html' %}
 {% block title %}/{% endblock title %}
 {% block content %}
     <div id="boards">
@@ -13,6 +13,6 @@
     </div>
     <div id="threads">
         <h2 id="threads-header">Latest active threads</h2>
-        {% include 'core/incl/threads_list.html' %}
+        {% include 'boards/incl/threads_list.html' %}
     </div>
 {% endblock content %}

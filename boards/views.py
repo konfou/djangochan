@@ -2,13 +2,13 @@ from django.db.models import Case, When
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
-from .models import Board, Post
+from core.models import Board, Post
 from .forms import NewThreadForm, NewReplyForm
 
 
 class IndexView(ListView):
     model = Board
-    template_name = 'core/index.html'
+    template_name = 'boards/index.html'
     context_object_name = 'boards'
 
     def get_context_data(self, *args, **kwargs):
@@ -22,7 +22,7 @@ class IndexView(ListView):
 
 class BoardView(FormMixin, DetailView):
     model = Board
-    template_name = 'core/board.html'
+    template_name = 'boards/board.html'
     context_object_name = 'board'
     slug_field = 'ln'
     slug_url_kwarg = 'board'
@@ -63,7 +63,7 @@ class BoardView(FormMixin, DetailView):
 
 class ThreadView(FormMixin, DetailView):
     model = Post
-    template_name = 'core/thread.html'
+    template_name = 'boards/thread.html'
     context_object_name = 'thread'
     pk_url_kwarg = 'thread'
     form_class = NewReplyForm

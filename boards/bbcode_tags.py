@@ -1,7 +1,7 @@
+from random import randint
+
 from precise_bbcode.bbcode.tag import BBCodeTag
 from precise_bbcode.tag_pool import tag_pool
-
-from random import randint
 
 
 class SpoilerTag(BBCodeTag):

@@ -4,7 +4,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from precise_bbcode.bbcode import get_parser
 
-from ..models import Board, Post
+from core.models import Board, Post
 
 try:
     bbcode_parser = get_parser()
