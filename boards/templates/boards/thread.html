@@ -8,7 +8,11 @@
         <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
     </div>
     <div id="top"></div>
-    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#bottom">Bottom</a>] [Replies: {{ thread.post_set.all.count }}]
+    [<a href="{% url 'board' board.ln %}" hx-boost="true"
+        hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
+    [<a href="#bottom">Bottom</a>]
+    {% include 'boards/incl/htmx_hx_update.html' %}
+    [Replies: {{ thread.post_set.all.count }}]
     <div class="thread">
         {% cache 500 thread_op thread.pk %}
         <div class="row op" id="p{{ thread.pk }}">
@@ -41,14 +45,20 @@
             {% endcache %}
         {% endfor %}
     </div>
-    [<a href="{% url 'board' board.ln %}">Return</a>] [<a href="#top">Top</a>]<br><br>
+    [<a href="{% url 'board' board.ln %}" hx-boost="true">Return</a>]
+    [<a href="#top">Top</a>]
+    [<a href="#"
+        hx-get="{{ request.get_full_path }}"
+        hx-select=".thread"
+        hx-target=".thread">Update</a>]
+    <br><br>
     <div id="bottom"></div>
     <details open>
         <summary>[New Reply]</summary>
-        <form class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
+        <form hx-boost="true" class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
             {{ form.as_p }}
-            <!-- <input type="submit" value="Submit"> -->
-            [<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]
+            <input type="submit" value="Submit">
+            <span class="text-submit">[<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]</span>
         </form>
     </details>
 {% endblock content %}

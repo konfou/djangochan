@@ -7,15 +7,15 @@
             <p id="board-description">{{ board.decription }}</p>
         {% endif %}
     </div>
+    <details>
+        <summary>[New Thread]</summary>
+        <form hx-bost="true" class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Submit">
+            <span class="text-submit">[<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]</span>
+        </form>
+    </details>
     <div id="threads">
-        <details>
-            <summary>[New Thread]</summary>
-            <form class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
-                {{ form.as_p }}
-                <!-- <input type="submit" value="Submit"> -->
-                [<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]
-            </form>
-        </details>
         <h3 id="threads-header">Threads</h3>
         {% include 'boards/incl/threads_list.html' %}
     </div>

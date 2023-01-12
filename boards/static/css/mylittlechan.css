@@ -28,6 +28,10 @@ textarea {
     color: #092e20; /* django green */
 }
 
+.text-submit {
+    visibility: hidden;
+}
+
 /* post types */
 
 .op {
