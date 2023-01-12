@@ -31,10 +31,10 @@
                     </div>
                     {% endthumbnail %}
                     <div class="two-thirds column">
-                        <span class="post-text"><p>{% post_render board.ln thread.text %}</p></span>
+                        <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
                     </div>
                 {% else %}
-                    <span class="post-text"><p>{% post_render board.ln thread.text %}</p></span>
+                    <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
                 {% endif %}
             </div>
         </div>

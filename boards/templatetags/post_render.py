@@ -16,7 +16,7 @@ register = template.Library()
 # from https://stackoverflow.com/a/11725011
 urlregex = r'(^(https?:\/\/)?[0-9a-zA-Z]+\.[-_0-9a-zA-Z]+\.[0-9a-zA-Z]+$)'
 
-BOARD = None
+THREAD = None
 
 
 # usually in chan boards posts don't share id namespace across boards
@@ -27,42 +27,44 @@ BOARD = None
 # may break if id namespace is split per board
 
 def post_link(match):
-    post_id = match.group(1)
-    if Post.objects.filter(pk=post_id).exists():
-        post = Post.objects.get(pk=post_id)
-        if BOARD == post.board.ln:
-            return f"<a href=\"{post.get_absolute_url()}\">&gt;&gt;{post_id}</a>"
+    target_id = match.group(1)
+    if Post.objects.filter(pk=target_id).exists():
+        target = Post.objects.get(pk=target_id)
+        if int(target_id) == THREAD.pk:
+            return f"<a href=\"{target.get_absolute_url()}#top\" hx-boost=\"true\">&gt;&gt;{target_id} (OP)</a>"
+        elif THREAD.post_set.filter(pk=target_id).exists():
+            return f"<a href=\"{target.get_absolute_url()}\" hx-boost=\"true\">&gt;&gt;{target_id}</a>"
+        elif target.board.ln == THREAD.board.ln:
+            return f"<a href=\"{target.get_absolute_url()}\" hx-boost=\"true\">&gt;&gt;{target_id} (cross-thread)</a>"
         else:
-            return f"<a href=\"{post.get_absolute_url()}\">&gt;&gt;&gt;/{post.board.ln}/{post_id}</a>"
+            return f"<a href=\"{target.get_absolute_url()}\" hx-boost=\"true\">&gt;&gt;&gt;/{target.board.ln}/{target_id}</a>"
 
-    return f"&gt;&gt;{post_id}"
+    return f"&gt;&gt;{target_id}"
 
 
 def board_link(match):
-    board_ln = match.group(1)
-    if Board.objects.filter(ln=board_ln).exists():
-        board = Board.objects.get(ln=board_ln)
-        ret = f"<a href=\"{board.get_absolute_url()}\">&gt;&gt;&gt;/{board_ln}/</a>"
+    target_board_ln = match.group(1)
+    if Board.objects.filter(ln=target_board_ln).exists():
+        target_board = Board.objects.get(ln=target_board_ln)
+        return f"<a href=\"{target_board.get_absolute_url()}\" hx-boost=\"true\">&gt;&gt;&gt;/{target_board_ln}/</a>"
     else:
-        ret = f"&gt;&gt;&gt;/{board_ln}/"
-
-    return ret
+        return f"&gt;&gt;&gt;/{target_board_ln}/"
 
 
 def cross_board_post_link(match):
-    board_ln, post_id = match.group(1, 2)
-    if Post.objects.filter(pk=post_id).exists():
-        post = Post.objects.get(pk=post_id)
-        if board_ln == post.board.ln:
-            return f"<a href=\"{post.get_absolute_url()}\">&gt;&gt;&gt;/{board_ln}/{post_id}</a>"
+    target_board_ln, target_post_id = match.group(1, 2)
+    if Post.objects.filter(pk=target_post_id).exists():
+        target_post = Post.objects.get(pk=target_post_id)
+        if target_board_ln == target_post.board.ln:
+            return f"<a href=\"{target_post.get_absolute_url()}\" hx-boost=\"true\">&gt;&gt;&gt;/{target_board_ln}/{target_post_id}</a>"
 
-    return f"&gt;&gt;&gt;/{board_ln}/{post_id}"
+    return f"&gt;&gt;&gt;/{target_board_ln}/{target_post_id}"
 
 
 @register.simple_tag
-def post_render(board, post):
-    global BOARD  # phew, global
-    BOARD = board
+def post_render(thread_id, post):
+    global THREAD  # phew, global
+    THREAD = Post.objects.get(pk=thread_id)
     post = bbcode_parser.render(post)
     post = re.sub(r'&gt;&gt;(\d+)', post_link, post)
     post = re.sub(r'&gt;&gt;&gt;/([a-z]+)/(?!\d+)', board_link, post)

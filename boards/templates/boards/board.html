@@ -9,7 +9,7 @@
     </div>
     <details>
         <summary>[New Thread]</summary>
-        <form hx-bost="true" class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
+        <form hx-boost="true" class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Submit">
             <span class="text-submit">[<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]</span>
