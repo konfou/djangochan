@@ -10,7 +10,6 @@ Learning Django building an imageboard.
 - add pagination
 - add capcodes
 - add ip-based post limit (needed to prevent spam)
-- cache posts renderings
 - per-board active thread limit, archive oldest bumped ones
 - search engine
 
