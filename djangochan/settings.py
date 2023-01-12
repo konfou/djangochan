@@ -4,7 +4,7 @@ import os
 env = environ.Env()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
@@ -12,6 +12,9 @@ CAPTCHA = env('CAPTCHA')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS').split()
 
 SITE_ID = 1
+
+API_ON = env('API_ON')
+WWW_ON = env('WWW_ON')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,14 +25,22 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'core',  # djangochan
-    'boards',  # djangochan
-    'api',  # djangochan
     'precise_bbcode',
-    'rest_framework',
     'simplemathcaptcha',
     'siteprofile',
     'sorl.thumbnail',
 ]
+
+if API_ON:
+    INSTALLED_APPS += [
+        'api',  # djangochan
+        'rest_framework',
+    ]
+
+if WWW_ON:
+    INSTALLED_APPS += [
+        'boards',  # djangochan
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cache set up
 # https://docs.djangoproject.com/en/4.1/topics/cache/
 
-if DEBUG:
+if DEBUG or not WWW_ON:
     CACHE_BACKEND = 'django.core.cache.backends.dummy.DummyCache'
 else:
     CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'

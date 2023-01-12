@@ -20,9 +20,17 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
-    path('', include('boards.urls')),
 ]
+
+if settings.API_ON:
+    urlpatterns += [
+        path('api/', include('api.urls')),
+    ]
+
+if settings.WWW_ON:
+    urlpatterns += [
+        path('', include('boards.urls')),
+    ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

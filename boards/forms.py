@@ -7,7 +7,8 @@ from core.models import Post
 
 
 class NewThreadForm(forms.ModelForm):
-    if settings.CAPTCHA:
+    # XXX: without `== True` always succeeds when using environ
+    if settings.CAPTCHA == True:
         captcha = MathCaptchaField(widget=MathCaptchaWidget(
             question_tmpl="%(num1)i %(operator)s %(num2)i = "))
 
