@@ -4,8 +4,8 @@ import os
 env = environ.Env(
     DEBUG=(bool, False),
     CAPTCHA=(bool, False),
-    API_ON=(bool, False),
-    WWW_ON=(bool, False),
+    API_ON=(bool, True),
+    WWW_ON=(bool, True),
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

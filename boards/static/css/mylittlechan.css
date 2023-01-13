@@ -28,7 +28,8 @@ textarea {
     color: #092e20; /* django green */
 }
 
-.text-submit {
+#text-submit,
+#scrollback {
     visibility: hidden;
 }
 

@@ -1,7 +1,16 @@
+function quote(pk) {
+    var text = document.getElementById('id_text');
+    text.value += `>>${pk}\n`;
+    document.querySelector('.newpostform').scrollIntoView();
+    var scrollback = document.getElementById('scrollback');
+    scrollback.style.visibility = "visible";
+    scrollback.firstChild.nextElementSibling.href = `#p${pk}`;
+}
+
 function onbodyload() {
     try { // at board or thread
         buttonSubmit = document.querySelector('input[type=submit]').remove();
-        document.getElementsByClassName('text-submit')[0].style.visibility = "visible";
+        document.getElementById('text-submit').style.visibility = "visible";
     } catch (e) {} // at index
     var viewimage = document.querySelector('#viewimage');
     var images = document.querySelectorAll('.image');

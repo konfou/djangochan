@@ -1,11 +1,16 @@
 {% load post_render %}
 {% load thumbnail %}
 <div class="row reply" id="p{{ post.pk }}">
-    <div class="row headline">
+    <div class="row headline" hx-boost="true">
         <p><span class="author">{{ post.author }}</span>
             {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
             posted at {{ post.timestamp }}
-            <span class="pk">#{{ post.pk }}</span></p>
+            {% if request.resolver_match.view_name != 'thread' %}
+                <span class="pk">#{{ post.pk }}</span>
+            {% else %}
+                <span class="pk"><a href="javascript:quote('{{ post.pk }}');">#{{ post.pk }}</a></span>
+            {% endif %}
+        </p>
     </div>
     <div class="row content">
         {% if post.image %}

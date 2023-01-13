@@ -16,12 +16,12 @@
     <div class="thread">
         {% cache 500 thread_op thread.pk %}
         <div class="row op" id="p{{ thread.pk }}">
-            <div class="row headline">
+            <div class="row headline" hx-boost="true">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
                     <span class="author">{{ thread.author }}</span>
                     {% if thread.tripcode %}<span class='tripcode'>!{{ thread.tripcode }}</span>{% endif %}
                     posted at {{ thread.timestamp }}
-                    <span class="pk">#{{ thread.pk }}</span></p>
+                    <span class="pk"><a href="javascript:quote('{{ thread.pk }}');">#{{ thread.pk }}</a></span></p>
             </div>
             <div class="row content">
                 {% if thread.image %}
@@ -40,7 +40,7 @@
         </div>
         {% endcache %}
         {% for post in replies %}
-            {% cache 500 reply post.pk %}
+            {% cache 500 threads_reply post.pk %}
                 {% include 'boards/incl/reply.html' %}
             {% endcache %}
         {% endfor %}
@@ -55,10 +55,11 @@
     <div id="bottom"></div>
     <details open>
         <summary>[New Reply]</summary>
+        <span id="scrollback">[<a href="#">Scrollback</a>]</span>
         <form hx-boost="true" class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Submit">
-            <span class="text-submit">[<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]</span>
+            <span id="text-submit">[<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]</span>
         </form>
     </details>
 {% endblock content %}
