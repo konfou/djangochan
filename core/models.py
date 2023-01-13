@@ -20,8 +20,16 @@ class SiteProfile(SiteProfileBase):
         settings, 'SITE_TITLE', 'djangochan'))
     description = models.CharField(max_length=128, default=getattr(
         settings, 'SITE_DESCRIPTION', 'django-powered imageboard'))
-    issue = models.CharField(max_length=512, default=getattr(
+    issue = models.TextField(default=getattr(
         settings, 'SITE_ISSUE', 'A message shown on index.'))
+
+
+class Report(models.Model):
+    board = models.ForeignKey(
+        'Board', on_delete=models.CASCADE, null=False, blank=False)
+    post = models.ForeignKey(
+        'Post', on_delete=models.CASCADE, null=False, blank=False)
+    reason = models.TextField(blank=True)
 
 
 class Board(models.Model):
@@ -53,6 +61,7 @@ class Post(models.Model):
     thread = models.ForeignKey(
         'self', on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    cookie = models.CharField(max_length=32, blank=True)
     # thread
     bump = models.DateTimeField(null=True)
     closed = models.BooleanField(default=False)
@@ -64,8 +73,6 @@ class Post(models.Model):
     text = models.TextField(blank=True)
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
-    # TODO: use field to allow post/image deletion
-    cookie = models.CharField(max_length=32, blank=True)
 
     def __init__(self, *args, **kwargs):
         self.sage = False
@@ -132,3 +139,9 @@ class Post(models.Model):
             return reverse('thread', kwargs={'board': self.board, 'thread': self.pk})
         else:
             return self.thread.get_absolute_url() + f'#p{self.pk}'
+
+    def get_delete_url(self):
+        return reverse('post-delete', kwargs={'board': self.board, 'post': self.pk})
+
+    def get_report_url(self):
+        return reverse('post-report', kwargs={'board': self.board, 'post': self.pk})

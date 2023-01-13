@@ -1,0 +1,34 @@
+{% load post_render %}
+{% load thumbnail %}
+<div class="row post">
+    <div class="row headline">
+        <p>{% if post.subject %}<span class="subject">{{ post.subject }}</span>{% endif %}
+            <span class="author">{{ post.author }}</span>
+            {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
+            posted at {{ post.timestamp }}
+            <span class="pk">#{{ post.pk }}</span>
+        </p>
+    </div>
+    <div class="row content">
+        {% if post.image %}
+            {% thumbnail post.image "x300" as im %}
+            <div class="one-third column">
+                <span class="image"><a href="{{ post.image.url}}"><img src="{{ im.url }}"></a></span>
+            </div>
+            {% endthumbnail %}
+            <div class="two-thirds column">
+                {% if post.thread %}
+                    <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
+                {% else %}
+                    <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
+                {% endif %}
+            </div>
+        {% else %}
+            {% if post.thread %}
+                <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
+            {% else %}
+                <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

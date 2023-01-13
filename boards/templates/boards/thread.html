@@ -21,7 +21,12 @@
                     <span class="author">{{ thread.author }}</span>
                     {% if thread.tripcode %}<span class='tripcode'>!{{ thread.tripcode }}</span>{% endif %}
                     posted at {{ thread.timestamp }}
-                    <span class="pk"><a href="javascript:quote('{{ thread.pk }}');">#{{ thread.pk }}</a></span></p>
+                    <span class="pk"><a href="javascript:quote('{{ thread.pk }}');">#{{ thread.pk }}</a></span>
+                    <details><summary class="inline">[+]</summary>
+                        [<a href="{{ thread.get_delete_url }}">Delete</a>]
+                        [<a href="{{ thread.get_report_url }}">Report</a>]
+                    </details>
+                </p>
             </div>
             <div class="row content">
                 {% if thread.image %}

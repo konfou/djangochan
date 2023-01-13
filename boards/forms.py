@@ -3,7 +3,7 @@ from django.conf import settings
 from simplemathcaptcha.fields import MathCaptchaField
 from simplemathcaptcha.widgets import MathCaptchaWidget
 
-from core.models import Post
+from core.models import Post, Report
 
 
 class NewThreadForm(forms.ModelForm):
@@ -36,3 +36,15 @@ class NewReplyForm(NewThreadForm):
                 self.instance.sage = True
 
         super(NewReplyForm, self).save(*args, **kwargs)
+
+
+class ReportPostForm(forms.ModelForm):
+    if settings.CAPTCHA:
+        captcha = MathCaptchaField(widget=MathCaptchaWidget(
+            question_tmpl="%(num1)i %(operator)s %(num2)i = "))
+
+    class Meta:
+        model = Report
+        fields = [
+            'reason'
+        ]

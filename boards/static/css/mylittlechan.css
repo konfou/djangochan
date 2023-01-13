@@ -57,12 +57,18 @@ textarea {
     color: darkgrey;
 }
 
+.headline > p,
+.headline > details,
+.inline {
+    display: inline;
+}
+
+/* post content elements */
+
 .image {
     height: 100%;
     width: auto;
 }
-
-/* post content elements */
 
 .quotetext {
     color: green;

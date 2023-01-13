@@ -15,6 +15,10 @@
                         on <span class="board"><a href="{{ thread.board.get_absolute_url }}">/{{ thread.board.ln }}/</a></span>
                     {% endif %}
                     <span class="pk">#{{ thread.pk }}</span>
+                    <details><summary class="inline">[+]</summary>
+                        [<a href="{{ thread.get_delete_url }}">Delete</a>]
+                        [<a href="{{ thread.get_report_url }}">Report</a>]
+                    </details>
                 </p>
             </div>
             <div class="row content">

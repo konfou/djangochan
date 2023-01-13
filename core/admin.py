@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Board, Post
+from . import models
 
-admin.site.register(Board)
-admin.site.register(Post)
+admin.site.register(models.Board)
+admin.site.register(models.Post)
+admin.site.register(models.Report)

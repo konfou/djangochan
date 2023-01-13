@@ -25,14 +25,12 @@ this repo and resets once daily.
 - improve site and admin panel design (django project site has cool
   design and colorscheme to base on, also check simple.css)
 - provide posting via JSON API (requires changes to simple-math-captcha)
-- autogenerate pass for author to delete post/image
 - add pagination
 - add capcodes
 - add ip-based post limit (needed to prevent spam, theoretically server
   could do that)
 - add ip-based ban (probably useless for users, and actual spam bots
   could be handled by server)
-- add report post
 - add catalog view
 - retain and make accessible original filename
 - per-board active thread limit, archive oldest bumped ones

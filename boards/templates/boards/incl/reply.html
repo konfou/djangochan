@@ -10,6 +10,10 @@
             {% else %}
                 <span class="pk"><a href="javascript:quote('{{ post.pk }}');">#{{ post.pk }}</a></span>
             {% endif %}
+            <details><summary class="inline">[+]</summary>
+                [<a href="{{ post.get_delete_url }}">Delete</a>]
+                [<a href="{{ post.get_report_url }}">Report</a>]
+            </details>
         </p>
     </div>
     <div class="row content">
