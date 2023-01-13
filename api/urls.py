@@ -7,5 +7,7 @@ router = DefaultRouter()
 router.register(r'boards', views.BoardViewSet)
 router.register(
     r'boards/(?P<board_ln>[^/.]+)/threads', views.ThreadViewSet)
+router.register(
+    r'boards/(?P<board_ln>[^/.]+)/posts', views.PostViewSet)
 
 urlpatterns = router.urls

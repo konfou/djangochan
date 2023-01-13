@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from core.models import Board, Post
-from .serializers import BoardSerializer, ThreadSerializer, ReplySerializer
+from .serializers import BoardSerializer, ThreadSerializer, ReplySerializer, PostSerializer
 
 
 class BoardViewSet(viewsets.ReadOnlyModelViewSet):
@@ -25,4 +25,18 @@ class ThreadViewSet(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, board_ln=None, pk=None):
         queryset = Post.objects.filter(thread=pk).order_by('timestamp')
         serializer = ReplySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class PostViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def list(self, request, board_ln=None):
+        return Response({})
+
+    def retrieve(self, request, board_ln=None, pk=None):
+        queryset = Post.objects.get(
+            board__ln=board_ln, pk=pk)
+        serializer = PostSerializer(queryset)
         return Response(serializer.data)

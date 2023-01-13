@@ -52,3 +52,12 @@ class ReplySerializer(serializers.ModelSerializer):
         fields = [
             'pk', 'timestamp', 'author', 'tripcode', 'text', 'image',
         ]
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            'pk', 'thread', 'subject',
+            'timestamp', 'author', 'tripcode', 'text', 'image',
+        ]
