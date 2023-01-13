@@ -1,7 +1,12 @@
 import environ
 import os
 
-env = environ.Env()
+env = environ.Env(
+    DEBUG=(bool, False),
+    CAPTCHA=(bool, False),
+    API_ON=(bool, False),
+    WWW_ON=(bool, False),
+)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env.read_env(os.path.join(BASE_DIR, '.env'))
