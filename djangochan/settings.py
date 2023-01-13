@@ -21,6 +21,11 @@ SITE_ID = 1
 API_ON = env('API_ON')
 WWW_ON = env('WWW_ON')
 
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'djangochan.middleware.timezone_middleware.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'djangochan.urls'

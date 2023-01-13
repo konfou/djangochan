@@ -1,3 +1,6 @@
+const tzname = Intl.DateTimeFormat().resolvedOptions().timeZone;
+document.cookie = "tzname=" + tzname;
+
 function quote(pk) {
     var text = document.getElementById('id_text');
     text.value += `>>${pk}\n`;
