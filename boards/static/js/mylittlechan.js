@@ -1,5 +1,5 @@
 const tzname = Intl.DateTimeFormat().resolvedOptions().timeZone;
-document.cookie = "tzname=" + tzname;
+document.cookie = "tzname=" + tzname + ";Path=/" + ";SameSite=Strict";
 
 function quote(pk) {
     var text = document.getElementById('id_text');
