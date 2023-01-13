@@ -28,6 +28,12 @@
                     </details>
                 </p>
             </div>
+            {% if thread.image %}
+                <div class="row info">
+                    <span>Size: {{ thread.image.width }}x{{ thread.image.height }}</span> |
+                    <span class="ellipsis">File: {{ thread.filename }}</span>
+                </div>
+            {% endif %}
             <div class="row content">
                 {% if thread.image %}
                     {% thumbnail thread.image "x300" as im %}

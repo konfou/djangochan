@@ -73,6 +73,7 @@ class Post(models.Model):
     text = models.TextField(blank=True)
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
+    filename = models.CharField(max_length=64, blank=True)
 
     def __init__(self, *args, **kwargs):
         self.sage = False
@@ -107,6 +108,7 @@ class Post(models.Model):
             self.image = None
             super(Post, self).save(*args, **kwargs)
             self.image = img
+            self.filename = img.name
             # on upload image will automatically be renamed
             # based on img_path() as originally intended
 

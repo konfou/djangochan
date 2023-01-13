@@ -16,6 +16,12 @@
             </details>
         </p>
     </div>
+    {% if post.image %}
+        <div class="row info">
+            <span>Size: {{ post.image.width }}x{{ post.image.height }}</span> |
+            <span class="ellipsis">File: {{ post.filename }}</span>
+        </div>
+    {% endif %}
     <div class="row content">
         {% if post.image %}
             {% thumbnail post.image "x300" as im %}

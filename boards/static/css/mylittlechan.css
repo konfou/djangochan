@@ -65,6 +65,22 @@ textarea {
 
 /* post content elements */
 
+.info > * {
+    vertical-align: middle;
+}
+
+.ellipsis {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 30%;
+}
+
+.ellipsis:hover {
+    overflow: visible;
+}
+
 .image {
     height: 100%;
     width: auto;
