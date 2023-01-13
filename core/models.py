@@ -101,7 +101,7 @@ class Post(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         storage = self.image.storage
-        if storage.exists(self.image.name):
+        if self.image and storage.exists(self.image.name):
             storage.delete(self.image.name)
         super().delete()
 
