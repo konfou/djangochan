@@ -99,6 +99,12 @@ class Post(models.Model):
             if not self.image and self.board.op_requires_img:
                 raise ValidationError('OP required to have an image.')
 
+    def delete(self, using=None, keep_parents=False):
+        storage = self.image.storage
+        if storage.exists(self.image.name):
+            storage.delete(self.image.name)
+        super().delete()
+
     def save(self, *args, **kwargs):
         # posts do not have a pk and timestamp until saved to db
         # thus instance.pk and self.timestamp return None
