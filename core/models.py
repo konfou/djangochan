@@ -25,14 +25,6 @@ class SiteProfile(SiteProfileBase):
         settings, 'SITE_ISSUE', 'A message shown on index.'))
 
 
-class Report(models.Model):
-    board = models.ForeignKey(
-        'Board', on_delete=models.CASCADE, null=False, blank=False)
-    post = models.ForeignKey(
-        'Post', on_delete=models.CASCADE, null=False, blank=False)
-    reason = models.TextField(blank=True)
-
-
 class Board(models.Model):
     # info
     name = models.CharField(max_length=16)
@@ -168,3 +160,12 @@ class Post(models.Model):
 
     def get_report_url(self):
         return reverse('post-report', kwargs={'board': self.board, 'post': self.pk})
+
+
+class Report(models.Model):
+    board = models.ForeignKey(
+        'Board', on_delete=models.CASCADE, null=False, blank=False)
+    post = models.ForeignKey(
+        'Post', on_delete=models.CASCADE, null=False, blank=False)
+    reason = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
