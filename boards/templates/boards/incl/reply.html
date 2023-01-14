@@ -1,3 +1,4 @@
+{% load cache %}
 {% load post_render %}
 {% load thumbnail %}
 <div class="row reply" id="p{{ post.pk }}">
@@ -5,21 +6,28 @@
         <p><span class="author">{{ post.author }}</span>
             {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
             posted at {{ post.timestamp }}
-            {% if request.resolver_match.view_name != 'thread' %}
-                <span class="pk">#{{ post.pk }}</span>
-            {% else %}
+            {% if request.resolver_match.view_name == 'thread' and not post.thread.closed %}
                 <span class="pk"><a href="javascript:quote('{{ post.pk }}');">#{{ post.pk }}</a></span>
+            {% elif request.resolver_match.view_name == 'search' %}
+                <span class="pk"><a href="{{ post.get_absolute_url }}">#{{ post.pk }}</a></span>
+            {% else %}
+                <span class="pk">#{{ post.pk }}</span>
             {% endif %}
-            <details><summary class="inline">[+]</summary>
-                [<a href="{{ post.get_delete_url }}">Delete</a>]
-                [<a href="{{ post.get_report_url }}">Report</a>]
-            </details>
+            {% if not thread.closed %}
+                <details><summary class="inline">[+]</summary>
+                    [<a href="{{ post.get_delete_url }}">Delete</a>]
+                    [<a href="{{ post.get_report_url }}">Report</a>]
+                </details>
+            {% endif %}
         </p>
     </div>
+    {% cache 500 post post.pk %}
     {% if post.image %}
         <div class="row info">
-            <span>Size: {{ post.image.width }}x{{ post.image.height }}</span> |
-            <span class="ellipsis">File: {{ post.filename }}</span>
+            <span>(File)</span>
+            <span>{{ post.image.size|filesizeformat }}</span> |
+            <span>{{ post.image.width }}x{{ post.image.height }}</span> |
+            <span class="ellipsis">{{ post.filename }}</span>
         </div>
     {% endif %}
     <div class="row content">
@@ -36,4 +44,5 @@
             <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
         {% endif %}
     </div>
+    {% endcache %}
 </div>

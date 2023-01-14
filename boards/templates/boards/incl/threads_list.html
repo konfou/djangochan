@@ -5,7 +5,6 @@
 {% for thread, replies in posts.items %}
     <div class="thread">
         <div class="row op" id="t{{ thread.pk }}">
-            {% cache 500 threads_list_op thread.pk %}
             <div class="row headline" hx-boost="true">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
                     <span class="author">{{ thread.author }}</span>
@@ -15,16 +14,21 @@
                         on <span class="board"><a href="{{ thread.board.get_absolute_url }}">/{{ thread.board.ln }}/</a></span>
                     {% endif %}
                     <span class="pk">#{{ thread.pk }}</span>
-                    <details><summary class="inline">[+]</summary>
-                        [<a href="{{ thread.get_delete_url }}">Delete</a>]
-                        [<a href="{{ thread.get_report_url }}">Report</a>]
-                    </details>
+                    {% if thread.sticky %}(S){% else %}
+                        <details><summary class="inline">[+]</summary>
+                            [<a href="{{ thread.get_delete_url }}">Delete</a>]
+                            [<a href="{{ thread.get_report_url }}">Report</a>]
+                        </details>
+                    {% endif %}
                 </p>
             </div>
+            {% cache 500 post thread.pk %}
             {% if thread.image %}
                 <div class="row info">
-                    <span>Size: {{ thread.image.width }}x{{ thread.image.height }}</span> |
-                    <span class="ellipsis">File: {{ thread.filename }}</span>
+                    <span>(File)</span>
+                    <span>{{ thread.image.size|filesizeformat }}</span> |
+                    <span>{{ thread.image.width }}x{{ thread.image.height }}</span> |
+                    <span class="ellipsis">{{ thread.filename }}</span>
                 </div>
             {% endif %}
             <div class="row content">
@@ -46,9 +50,7 @@
                [<a href="{% url 'thread' thread.board.ln thread.pk %}" hx-boost="true">Visit</a>]</p>
         </div>
         {% for post in replies %}
-            {% cache 500 threads_list_reply post.pk %}
                 {% include 'boards/incl/reply.html' %}
-            {% endcache %}
         {% endfor %}
     </div>
 {% empty %}

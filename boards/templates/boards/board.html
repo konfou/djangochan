@@ -7,12 +7,18 @@
             <p id="board-description">{{ board.decription }}</p>
         {% endif %}
     </div>
+    <div class="row">
+        [<a href="{% url 'board-catalog' board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='c'] from:body">Catalog</a>]
+        [<a href="{% url 'board-archive' board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='a'] from:body">Archive</a>]
+        [<a href="{% url 'board-search' board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='s'] from:body">Search</a>]
+    </div>
     <details>
         <summary>[New Thread]</summary>
         <form hx-boost="true" class="newpostform" id="newthreadform" enctype="multipart/form-data" method="post">{% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Submit">
-            <span class="text-submit">[<a href="#" onclick="document.getElementById('newthreadform').submit(); return false;">Submit</a>]</span>
+            {{ form }}
         </form>
     </details>
     <div id="threads">

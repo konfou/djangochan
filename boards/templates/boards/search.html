@@ -1,0 +1,22 @@
+{% extends 'boards/base.html' %}
+{% block title %}/{{ board.ln }}/{% endblock title %}
+{% block content %}
+    <div id="board">
+        <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
+        {% if board.description %}
+            <p id="board-description">{{ board.decription }}</p>
+        {% endif %}
+    </div>
+    [<a href="{% url 'board' board.ln %}" hx-boost="true"
+        hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
+    <form hx-boost="true" id="searchform" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+        <span class="text-submit">[<a href="#" onclick="document.getElementById('searchform').submit(); return false;">Submit</a>]</span>
+    </form>
+    {% if search_results %}
+        {% for post in search_results %}
+            {% include 'boards/incl/reply.html' %}
+        {% endfor %}
+    {% endif %}
+{% endblock content %}

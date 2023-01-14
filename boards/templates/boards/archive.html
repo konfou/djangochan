@@ -1,0 +1,46 @@
+{% extends 'boards/base.html' %}
+{% load post_render %}
+{% load thumbnail %}
+{% block title %}/{{ board.ln }}/{% endblock title %}
+{% block content %}
+    <div id="board">
+        <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
+        {% if board.description %}
+            <p id="board-description">{{ board.decription }}</p>
+        {% endif %}
+    </div>
+    <div class="row">
+        [<a href="{% url 'board' board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
+        [<a href="{% url 'board-catalog' board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='c'] from:body">Catalog</a>]
+        [<a href="{% url 'board-search' board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='s'] from:body">Search</a>]
+    </div>
+    <div id="threads">
+        <h3 id="threads-header">Archive</h3>
+        {% for thread in threads %}
+            <div class="threads-archive">
+                <div class="row op">
+                    <div class="row content">
+                        {% if thread.image %}
+                            {% thumbnail thread.image "x300" as im %}
+                            <div class="one-third column">
+                                <span class="image"><a href="{{ thread.image.url}}"><img src="{{ im.url }}"></a></span>
+                            </div>
+                            {% endthumbnail %}
+                            <div class="two-thirds column">
+                                <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
+                            </div>
+                        {% else %}
+                            <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
+                        {% endif %}
+                    </div>
+                    <p>[<a href="{% url 'thread' thread.board.ln thread.pk %}" hx-boost="true">Visit</a>]</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No threads yet.</p>
+        {% endfor %}
+    </div>
+{% endblock content %}

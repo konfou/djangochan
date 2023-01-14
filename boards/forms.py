@@ -7,6 +7,8 @@ from core.models import Post, Report
 
 
 class NewThreadForm(forms.ModelForm):
+    template_name = "boards/new_post_form.html"
+
     if settings.CAPTCHA:
         captcha = MathCaptchaField(widget=MathCaptchaWidget(
             question_tmpl="%(num1)i %(operator)s %(num2)i = "))
@@ -24,6 +26,8 @@ class NewThreadForm(forms.ModelForm):
 
 
 class NewReplyForm(NewThreadForm):
+    template_name = "boards/new_post_form.html"
+
     class Meta(NewThreadForm.Meta):
         exclude = [
             'subject'
@@ -48,3 +52,7 @@ class ReportPostForm(forms.ModelForm):
         fields = [
             'reason'
         ]
+
+
+class SearchBoardForm(forms.Form):
+    search = forms.CharField()

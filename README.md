@@ -17,23 +17,18 @@ There's a test instance deployed on PythonAnywhere, linked in repo
 details, where someone can check how project looks like. It updates from
 this repo and resets once daily.
 
-*WARNING: Not production ready. Database schema not finalized.*
-
 ## TODO
 
+- add ip-based post limit (needed to prevent spam, theoretically server
+  could do that)
+- add ip-based ban (probably useless for users, and actual spam bots
+  could be handled by server)
 - improve htmx utilization (currently overlying on hx-boost)
 - improve site and admin panel design (django project site has cool
   design and colorscheme to base on, also check simple.css)
 - provide posting via JSON API (requires changes to simple-math-captcha)
 - add pagination
 - add capcodes
-- add ip-based post limit (needed to prevent spam, theoretically server
-  could do that)
-- add ip-based ban (probably useless for users, and actual spam bots
-  could be handled by server)
-- add catalog view
-- retain and make accessible original filename
-- per-board active thread limit, archive oldest bumped ones
 - quote link preview utilizing the htmx or json api
 - search engine
 

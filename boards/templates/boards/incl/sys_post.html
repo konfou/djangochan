@@ -1,3 +1,4 @@
+{% load cache %}
 {% load post_render %}
 {% load thumbnail %}
 <div class="row post">
@@ -10,6 +11,7 @@
         </p>
     </div>
     <div class="row content">
+        {% cache 500 post post.pk %}
         {% if post.image %}
             {% thumbnail post.image "x300" as im %}
             <div class="one-third column">
@@ -30,5 +32,6 @@
                 <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
             {% endif %}
         {% endif %}
+        {% endcache %}
     </div>
 </div>

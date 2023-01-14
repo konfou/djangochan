@@ -33,8 +33,10 @@ class ThreadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'pk', 'timestamp', 'author', 'tripcode', 'text', 'image',
-            'subject', 'closed', 'sticky',
+            'pk', 'subject',
+            'timestamp', 'author', 'tripcode', 'text',
+            'image', 'filename',
+            'closed', 'sticky',
             'replies_count', 'last_reply_timestamp',
         ]
 
@@ -50,14 +52,19 @@ class ReplySerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'pk', 'timestamp', 'author', 'tripcode', 'text', 'image',
+            'pk',  # 'thread', 'subject',
+            'timestamp', 'author', 'tripcode', 'text',
+            'image', 'filename',
         ]
 
 
 class PostSerializer(serializers.ModelSerializer):
+    # XXX: if done similar to forms by inheriting and excluding
+    # following assertion error happens
+    # > Cannot set both 'fields' and 'exclude' options on serializer <name>.
+    # so it's kinda done the other way around
     class Meta:
         model = Post
-        fields = [
-            'pk', 'thread', 'subject',
-            'timestamp', 'author', 'tripcode', 'text', 'image',
+        fields = ReplySerializer.Meta.fields + [
+            'thread', 'subject',
         ]

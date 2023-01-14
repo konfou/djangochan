@@ -2,36 +2,53 @@
 {% load cache %}
 {% load post_render %}
 {% load thumbnail %}
-{% block title %}/{{ board.ln }}/{{ thread.pk }}/:{{ thread.subject }}{% endblock title %}
+{% block title %}/{{ thread.board.ln }}/{{ thread.pk }}/:{{ thread.subject }}{% endblock title %}
 {% block content %}
     <div id="board">
-        <h2 id="board-header">/{{ board.ln }}/ - {{ board.name }}</h2>
+        <h2 id="board-header">/{{ thread.board.ln }}/ - {{ thread.board.name }}</h2>
     </div>
     <div id="top"></div>
-    [<a href="{% url 'board' board.ln %}" hx-boost="true"
+    [<a href="{% url 'board' thread.board.ln %}" hx-boost="true"
         hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
+        [<a href="{% url 'board-catalog' thread.board.ln %}" hx-boost="true"
+            hx-trigger="click, keyup[altKey&&key=='c'] from:body">Catalog</a>]
     [<a href="#bottom">Bottom</a>]
-    {% include 'boards/incl/htmx_hx_update.html' %}
+    {% if not thread.closed %}
+        {% include 'boards/incl/htmx_hx_update.html' %}
+    {% endif %}
     [Replies: {{ thread.post_set.all.count }}]
+    <p>
+        {% if thread.closed %}(<em>Closed</em>){% endif %}
+        {% if thread.archived %}(<em>Archived</em>){% endif %}
+        {% if thread.sticky %}(<em>Sticky</em>){% endif %}
+    </p>
     <div class="thread">
-        {% cache 500 thread_op thread.pk %}
         <div class="row op" id="p{{ thread.pk }}">
             <div class="row headline" hx-boost="true">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
                     <span class="author">{{ thread.author }}</span>
                     {% if thread.tripcode %}<span class='tripcode'>!{{ thread.tripcode }}</span>{% endif %}
                     posted at {{ thread.timestamp }}
-                    <span class="pk"><a href="javascript:quote('{{ thread.pk }}');">#{{ thread.pk }}</a></span>
-                    <details><summary class="inline">[+]</summary>
-                        [<a href="{{ thread.get_delete_url }}">Delete</a>]
-                        [<a href="{{ thread.get_report_url }}">Report</a>]
-                    </details>
+                    {% if not thread.closed %}
+                        <span class="pk"><a href="javascript:quote('{{ thread.pk }}');">#{{ thread.pk }}</a></span>
+                    {% else %}
+                        <span class="pk">#{{ thread.pk }}</span>
+                    {% endif %}
+                    {% if not thread.sticky and not thread.archived %}
+                        <details><summary class="inline">[+]</summary>
+                            [<a href="{{ thread.get_delete_url }}">Delete</a>]
+                            [<a href="{{ thread.get_report_url }}">Report</a>]
+                        </details>
+                    {% endif %}
                 </p>
             </div>
+            {% cache 500 post thread.pk %}
             {% if thread.image %}
                 <div class="row info">
-                    <span>Size: {{ thread.image.width }}x{{ thread.image.height }}</span> |
-                    <span class="ellipsis">File: {{ thread.filename }}</span>
+                    <span>(File)</span>
+                    <span>{{ thread.image.size|filesizeformat }}</span> |
+                    <span>{{ thread.image.width }}x{{ thread.image.height }}</span> |
+                    <span class="ellipsis">{{ thread.filename }}</span>
                 </div>
             {% endif %}
             <div class="row content">
@@ -48,29 +65,30 @@
                     <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
                 {% endif %}
             </div>
-        </div>
-        {% endcache %}
-        {% for post in replies %}
-            {% cache 500 threads_reply post.pk %}
-                {% include 'boards/incl/reply.html' %}
             {% endcache %}
+        </div>
+        {% for post in thread.post_set.all %}
+                {% include 'boards/incl/reply.html' %}
         {% endfor %}
     </div>
-    [<a href="{% url 'board' board.ln %}" hx-boost="true">Return</a>]
-    [<a href="#top">Top</a>]
-    [<a href="#"
-        hx-get="{{ request.get_full_path }}"
-        hx-select=".thread"
-        hx-target=".thread">Update</a>]
-    <br><br>
     <div id="bottom"></div>
-    <details open>
-        <summary>[New Reply]</summary>
-        <span id="scrollback">[<a href="#">Scrollback</a>]</span>
-        <form hx-boost="true" class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Submit">
-            <span id="text-submit">[<a href="#" onclick="document.getElementById('newreplyform').submit(); return false;">Submit</a>]</span>
-        </form>
-    </details>
+    [<a href="{% url 'board' thread.board.ln %}" hx-boost="true">Return</a>]
+    [<a href="{% url 'board-catalog' thread.board.ln %}" hx-boost="true">Catalog</a>]
+    [<a href="#top">Top</a>]
+    {% if not thread.closed %}
+        [<a href="#"
+            hx-get="{{ request.get_full_path }}"
+            hx-select=".thread"
+            hx-target=".thread">Update</a>]
+    {% endif %}
+    <br><br>
+    {% if not thread.closed %}
+        <details open>
+            <summary>[New Reply]</summary>
+            <div id="scrollback">[<a href="#">Scrollback</a>]</div>
+            <form hx-boost="true" class="newpostform" id="newreplyform" enctype="multipart/form-data" method="post">{% csrf_token %}
+                {{ form }}
+            </form>
+        </details>
+    {% endif %}
 {% endblock content %}

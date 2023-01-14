@@ -7,7 +7,12 @@ function quote(pk) {
     document.querySelector('.newpostform').scrollIntoView();
     var scrollback = document.getElementById('scrollback');
     scrollback.style.visibility = "visible";
+    scrollback.style.margin = "8px";
     scrollback.firstChild.nextElementSibling.href = `#p${pk}`;
+    scrollback.addEventListener('click', (e) => {
+        scrollback.style.visibility = "hidden";
+        scrollback.style.margin = "";
+    }, false);
 }
 
 function onbodyload() {

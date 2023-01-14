@@ -11,7 +11,7 @@ class SiteProfileBase(models.Model):
 
     class Meta:
         abstract = True
-        app_label='sites'  # make it under sites app (in admin)
+        app_label = 'sites'  # make it under sites app (in admin)
 
 ## in core.models
 # from siteprofile.models import SiteProfileBase

@@ -1,0 +1,13 @@
+{% for field in form %}
+    {{ field.errors }}
+    <div class="row">
+        <div class="one-third column">
+            {{ field.label_tag }}
+        </div>
+        <div class="two-thirds column">
+            {{ field }}
+        </div>
+    </div>
+{% endfor %}
+<input type="submit" value="Submit">
+<span class="text-submit">[<a href="#" onclick="document.querySelector('newpostform').submit(); return false;">Submit</a>]</span>

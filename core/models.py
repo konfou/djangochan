@@ -3,6 +3,7 @@ import hashlib
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Case, When
 from django.urls import reverse
 from django.utils import timezone
 from siteprofile.models import SiteProfileBase
@@ -41,7 +42,7 @@ class Board(models.Model):
     max_threads = models.IntegerField(null=True, default=100)
     thread_bump_limit = models.IntegerField(null=True, default=500)
     thread_img_limit = models.IntegerField(null=True, default=150)
-    archive_retention_time = models.TimeField(null=True)
+    archive_retention_time = models.TimeField(null=True, blank=True)
     # bool settings
     op_requires_img = models.BooleanField(default=False)
     textboard = models.BooleanField(default=False)
@@ -52,6 +53,12 @@ class Board(models.Model):
 
     def get_absolute_url(self):
         return reverse('board', kwargs={'board': self.ln})
+
+    def get_threads_count(self):
+        return self.post_set.filter(thread__isnull=True).count()
+
+    def is_max(self):
+        return self.get_threads_count() >= self.max_threads
 
 
 class Post(models.Model):
@@ -66,6 +73,7 @@ class Post(models.Model):
     bump = models.DateTimeField(null=True)
     closed = models.BooleanField(default=False)
     sticky = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False)
     # user provided
     author = models.CharField(max_length=32, default='Anonymous')
     tripcode = models.CharField(max_length=10, blank=True)
@@ -99,7 +107,7 @@ class Post(models.Model):
             if not self.image and self.board.op_requires_img:
                 raise ValidationError('OP required to have an image.')
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self, *args, **kwargs):
         storage = self.image.storage
         if self.image and storage.exists(self.image.name):
             storage.delete(self.image.name)
@@ -122,7 +130,7 @@ class Post(models.Model):
             # XXX: maybe let bump be Null for replies
             self.bump = self.timestamp
             # bump thread unless saged by option or auto
-            if not self.sage and self.thread.post_set.count() <= self.board.thread_bump_limit:
+            if not self.sage and not self.thread.post_set.count() >= self.board.thread_bump_limit:
                 # required to first save an instance
                 # changes directly on self.thread won't be saved
                 thread = self.thread
@@ -132,6 +140,13 @@ class Post(models.Model):
             # happens during thread creation
             # but not when thread.save() above is called
             self.bump = self.timestamp
+            if not self.archived and self.board.is_max():
+                # XXX: [0]/latest() will return the new thread since it has None bump
+                bottom = self.board.post_set.filter(
+                    thread__isnull=True, sticky=False, archived=False).order_by('bump')[1]
+                bottom.archived = True
+                bottom.closed = True
+                bottom.save()
 
         if not self.tripcode and '#' in self.author:
             usr, pwd = self.author.rsplit('#')
