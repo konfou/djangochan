@@ -125,8 +125,9 @@ class BoardSearchView(FormMixin, DetailView):
 
     def form_valid(self, form):
         query = form.cleaned_data['search']
+        results = self.get_results(query)
         return render(self.request, self.template_name,
-                      {'board': self.object, 'search_results': self.get_results(query)})
+                      {'board': self.object, 'search_results': results})
 
 
 class ThreadView(FormMixin, DetailView):

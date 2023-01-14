@@ -1,4 +1,7 @@
 {% extends 'boards/base.html' %}
+{% load cache %}
+{% load thumbnail %}
+{% load post_render %}
 {% block title %}/{{ board.ln }}/{% endblock title %}
 {% block content %}
     <div id="board">
@@ -16,7 +19,51 @@
     </form>
     {% if search_results %}
         {% for post in search_results %}
-            {% include 'boards/incl/reply.html' %}
+            <div class="row post">
+                <div class="row headline" hx-boost="true">
+                    <p><span class="author">{{ post.author }}</span>
+                        {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
+                        posted at {{ post.timestamp }}
+                        <span class="pk"><a href="{{ post.get_absolute_url }}">#{{ post.pk }}</a></span>
+                        <details><summary class="inline">[+]</summary>
+                            [<a href="{{ post.get_delete_url }}">Delete</a>]
+                            [<a href="{{ post.get_report_url }}">Report</a>]
+                        </details>
+                    </p>
+                </div>
+                {% cache 500 post post.pk %}
+                    {% if post.image %}
+                        <div class="row info">
+                            <span>(File)</span>
+                            <span>{{ post.image.size|filesizeformat }}</span> |
+                            <span>{{ post.image.width }}x{{ post.image.height }}</span> |
+                            <span class="ellipsis">{{ post.filename }}</span>
+                        </div>
+                    {% endif %}
+                    <div class="row content">
+                        {% if post.image %}
+                            {% thumbnail post.image "x300" as im %}
+                            <div class="one-third column">
+                                <span class="image"><a href="{{ post.image.url}}"><img src="{{ im.url }}"></a></span>
+                            </div>
+                            {% endthumbnail %}
+                            <div class="two-thirds column">
+                                {% if post.thread %}
+                                    <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
+                                {% else %}
+                                    <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            {% if post.thread %}
+                                <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
+                            {% else %}
+                                <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endcache %}
+            </div>
         {% endfor %}
     {% endif %}
 {% endblock content %}

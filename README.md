@@ -19,6 +19,8 @@ this repo and resets once daily.
 
 ## TODO
 
+- refactor search, thread, incl/threads_list, reply templates (currently
+  they share large parts)
 - add ip-based post limit (needed to prevent spam, theoretically server
   could do that)
 - add ip-based ban (probably useless for users, and actual spam bots
@@ -30,7 +32,6 @@ this repo and resets once daily.
 - add pagination
 - add capcodes
 - quote link preview utilizing the htmx or json api
-- search engine
 
 Project considered feature complete after those are done.
 

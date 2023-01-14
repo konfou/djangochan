@@ -2,7 +2,7 @@
 {% block title %}sys/post/{{ post.board.ln }}/{{ post.pk }}/delete{% endblock title %}
 {% block content %}
     <div><strong>Deleting post:</strong></div>
-    {% include 'boards/incl/sys_post.html' %}
+    {% include 'sys/incl/post.html' %}
     {% if not error %}
         <form hx-boost="true" class="deletepostform" id="deletepostform" method="post">{% csrf_token %}
             <input type="submit" value="Submit">
