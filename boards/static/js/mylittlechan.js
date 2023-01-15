@@ -1,47 +1,47 @@
 const tzname = Intl.DateTimeFormat().resolvedOptions().timeZone;
-document.cookie = "tzname=" + tzname + ";Path=/" + ";SameSite=Strict";
+document.cookie = 'tzname=' + tzname + ';Path=/' + ';SameSite=Strict';
 
 const kdEventExclude = ['input', 'textarea'];
 
-var replies;
-var viewimage;
-var images;
-var currentImageIndx;
+let replies;
+let viewimage;
+let images;
+let currentImageIndx;
 
-var scrollPos;
+let scrollPos;
 
 /* generic utility functions */
 
-function keepScrollPos() {
+function keepScrollPos () {
     scrollPos = document.scrollingElement.scrollTop;
 }
 
 /* site-specific functions */
 
-function quote(pk) {
-    var text = document.getElementById('id_text');
+function quote (pk) {
+    const text = document.getElementById('id_text');
+    const scrollback = document.getElementById('scrollback');
     text.value += `>>${pk}\n`;
     document.querySelector('.newpostform').scrollIntoView();
-    var scrollback = document.getElementById('scrollback');
-    scrollback.style.visibility = "visible";
-    scrollback.style.margin = "8px";
+    scrollback.style.visibility = 'visible';
+    scrollback.style.margin = '8px';
     scrollback.firstChild.nextElementSibling.href = `#p${pk}`;
     scrollback.addEventListener('click', (e) => {
-        scrollback.style.visibility = "hidden";
-        scrollback.style.margin = "";
+        scrollback.style.visibility = 'hidden';
+        scrollback.style.margin = '';
     }, false);
 }
 
-function onBodyLoad() {
+function onBodyLoad () {
     try { // at board or thread
-        buttonSubmit = document.querySelector('input[type=submit]').remove();
-        document.getElementById('text-submit').style.visibility = "visible";
+        document.querySelector('input[type=submit]').remove();
+        document.getElementById('text-submit').style.visibility = 'visible';
     } catch (e) {} // at index
     replies = document.querySelectorAll('.reply');
     viewimage = document.querySelector('#viewimage');
     images = document.querySelectorAll('.image');
     images.forEach((span, indx) => {
-        a = span.firstChild;
+        const a = span.firstChild;
         a.addEventListener('click', (e) => {
             viewimage.style.display = 'block';
             viewimage.style.backgroundImage = 'url(' + e.currentTarget.href + ')';
@@ -51,43 +51,42 @@ function onBodyLoad() {
     });
 }
 
-function changeImage(di) {
-    var nextImageIndx = currentImageIndx + di;
-    if (nextImageIndx < 0 || nextImageIndx >= images.length)
-        return;
+function changeImage (di) {
+    const nextImageIndx = currentImageIndx + di;
+    if (nextImageIndx < 0 || nextImageIndx >= images.length) return;
     currentImageIndx = nextImageIndx;
-    var a = images[currentImageIndx].firstChild;
+    const a = images[currentImageIndx].firstChild;
     viewimage.style.backgroundImage = 'url(' + a.href + ')';
 }
 
 document.addEventListener('keydown', (e) => {
-    var srcElem = e.target;
-    if (kdEventExclude.indexOf(srcElem.tagName) == -1) {
+    const srcElem = e.target;
+    if (!kdEventExclude.includes(srcElem.tagName.toLowerCase())) {
         switch (e.key) {
-        case "b":
-            keepScrollPos()
+        case 'b':
+            keepScrollPos();
             document.querySelector('#bottom').scrollIntoView();
             break;
-        case "t":
-            keepScrollPos()
+        case 't':
+            keepScrollPos();
             document.querySelector('#top').scrollIntoView();
             break;
-        case "s":
+        case 's':
             document.scrollingElement.scrollTop = scrollPos;
             break;
-        case "Escape":
+        case 'Escape':
             viewimage.style.display = 'none';
             break;
-        case "ArrowLeft":
-            if (viewimage.style.display == 'block') {
-                changeImage(-1)
+        case 'ArrowLeft':
+            if (viewimage.style.display === 'block') {
+                changeImage(-1);
             } else {
                 Array.from(replies).find((el) => el.getBoundingClientRect().top - document.scrollingElement.scrollTop < 0).scrollIntoView();
             }
             break;
-        case "ArrowRight":
-            if (viewimage.style.display == 'block') {
-                changeImage(1)
+        case 'ArrowRight':
+            if (viewimage.style.display === 'block') {
+                changeImage(1);
             } else {
                 Array.from(replies).find((el) => el.getBoundingClientRect().top - document.scrollingElement.scrollTop > 0).scrollIntoView();
             }
@@ -96,5 +95,5 @@ document.addEventListener('keydown', (e) => {
     }
 }, false);
 
-onBodyLoad()
-htmx.on('htmx:afterOnLoad', onBodyLoad)
+onBodyLoad();
+htmx.on('htmx:afterOnLoad', onBodyLoad);
