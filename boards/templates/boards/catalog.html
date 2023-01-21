@@ -38,9 +38,9 @@
                             {% thumbnail thread.image "x300" as im %}
                             <span class="image"><a href="{{ thread.image.url}}"><img src="{{ im.url }}"></a></span>
                             {% endthumbnail %}
-                            <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
+                            <span class="post-text"><p>{% post_render thread %}</p></span>
                         {% else %}
-                            <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
+                            <span class="post-text"><p>{% post_render thread %}</p></span>
                         {% endif %}
                     </div>
                 {% endfor %}

@@ -1,4 +1,5 @@
 import re
+import random
 
 from django import template
 from django.utils.safestring import mark_safe
@@ -60,17 +61,22 @@ def cross_board_post_link(match):
 
     return f"&gt;&gt;&gt;/{target_board_ln}/{target_post_id}"
 
+def roll(match):
+    return '<span class="roll">Roll: ' + str(random.randint(1, 100)) + '</span>'
+
 
 @register.simple_tag
-def post_render(thread_id, post):
+def post_render(post):
     global THREAD  # phew, global
-    THREAD = Post.objects.get(pk=thread_id)
-    post = bbcode_parser.render(post)
-    post = re.sub(r'&gt;&gt;(\d+)', post_link, post)
-    post = re.sub(r'&gt;&gt;&gt;/([a-z]+)/(?!\d+)', board_link, post)
-    post = re.sub(r'&gt;&gt;&gt;/([a-z]+)/(\d+)', cross_board_post_link, post)
-    post = re.sub(urlregex, "<a href=\"\g<0>\">\g<0></a>", post)
+    THREAD = post.thread
+    text = bbcode_parser.render(post.text)
+    random.seed(post.timestamp)
+    text = re.sub(r'\[roll]', roll, text)
+    text = re.sub(r'&gt;&gt;(\d+)', post_link, text)
+    text = re.sub(r'&gt;&gt;&gt;/([a-z]+)/(?!\d+)', board_link, text)
+    text = re.sub(r'&gt;&gt;&gt;/([a-z]+)/(\d+)', cross_board_post_link, text)
+    text = re.sub(urlregex, "<a href=\"\g<0>\">\g<0></a>", text)
     # XXX: looks terrible
-    post = '<br />'.join(re.sub(r'^(&gt;.+)$', "<span class=\"quotetext\">\g<1></span>", line)
-                         for line in post.split('<br />'))
-    return mark_safe(post)
+    text = '<br />'.join(re.sub(r'^(&gt;.+)$', "<span class=\"quotetext\">\g<1></span>", line)
+                         for line in text.split('<br />'))
+    return mark_safe(text)

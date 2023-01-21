@@ -30,10 +30,10 @@
                             </div>
                             {% endthumbnail %}
                             <div class="two-thirds column">
-                                <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
+                                <span class="post-text"><p>{% post_render thread %}</p></span>
                             </div>
                         {% else %}
-                            <span class="post-text"><p>{% post_render thread.pk thread.text %}</p></span>
+                            <span class="post-text"><p>{% post_render thread %}</p></span>
                         {% endif %}
                     </div>
                     <p>[<a href="{{ thread.get_absolute_url }}" hx-boost="true">Visit</a>]</p>

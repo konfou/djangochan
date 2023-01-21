@@ -19,18 +19,10 @@
             </div>
             {% endthumbnail %}
             <div class="two-thirds column">
-                {% if post.thread %}
-                    <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
-                {% else %}
-                    <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
-                {% endif %}
+                <span class="post-text"><p>{% post_render post.thread %}</p></span>
             </div>
         {% else %}
-            {% if post.thread %}
-                <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
-            {% else %}
-                <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
-            {% endif %}
+            <span class="post-text"><p>{% post_render post.thread %}</p></span>
         {% endif %}
         {% endcache %}
     </div>
