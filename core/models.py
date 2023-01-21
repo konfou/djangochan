@@ -11,6 +11,7 @@ from siteprofile.models import SiteProfileBase
 
 def img_path(instance, filename):
     ext = filename.rsplit('.')[-1]
+    # return 'i/{}/{}.{}'.format(instance.board, instance.pk, ext)
     return 'img/{}.{}'.format(instance.pk, ext)
 
 
@@ -96,6 +97,8 @@ class Post(models.Model):
             if self.image and thread.post_set.filter(~models.Q(image='')).count() >= self.board.thread_img_limit:
                 raise ValidationError('Image limit has been reached.')
         else:  # is thread
+            if self.board.closed:
+                raise ValidationError('Board is closed.')
             if not self.image and self.board.op_requires_img:
                 raise ValidationError('OP required to have an image.')
 
