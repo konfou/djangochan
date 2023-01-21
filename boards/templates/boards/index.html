@@ -7,7 +7,7 @@
         <h2 id="boards-header">Boards</h2>
         <ul>
             {% for board in boards %}
-                <li><a href="{% url 'board' board.ln %}" hx-boost="true">/{{ board.ln}}/ - {{ board.name }}</a></li>
+                <li><a href="{{ board.get_absolute_url }}" hx-boost="true">/{{ board.ln}}/ - {{ board.name }}</a></li>
             {% empty %}
                 <li>No boards yet.</li>
             {% endfor %}

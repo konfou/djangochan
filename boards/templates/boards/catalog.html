@@ -10,7 +10,7 @@
         {% endif %}
     </div>
     <div class="row">
-        [<a href="{% url 'board' board.ln %}" hx-boost="true"
+        [<a href="{{ board.get_absolute_url }}" hx-boost="true"
             hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
         [<a href="{% url 'board-archive' board.ln %}" hx-boost="true"
             hx-trigger="click, keyup[altKey&&key=='a'] from:body">Archive</a>]
@@ -32,7 +32,7 @@
                     <div class="one-third column">
                         <span>
                             R:<strong>{{ thread.post_set.all.count }}</strong>
-                            [<a href="{% url 'thread' thread.board.ln thread.pk %}" hx-boost="true">Visit</a>]
+                            [<a href="{{ thread.get_absolute_url }}" hx-boost="true">Visit</a>]
                         </span>
                         {% if thread.image %}
                             {% thumbnail thread.image "x300" as im %}

@@ -8,7 +8,7 @@
         <h2 id="board-header">/{{ thread.board.ln }}/ - {{ thread.board.name }}</h2>
     </div>
     <div id="top"></div>
-    [<a href="{% url 'board' thread.board.ln %}" hx-boost="true"
+    [<a href="{{ thread.board.get_absolute_url }}" hx-boost="true"
         hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
         [<a href="{% url 'board-catalog' thread.board.ln %}" hx-boost="true"
             hx-trigger="click, keyup[altKey&&key=='c'] from:body">Catalog</a>]
@@ -42,7 +42,6 @@
                     {% endif %}
                 </p>
             </div>
-            {% cache 500 post thread.pk %}
             {% if thread.image %}
                 <div class="row info">
                     <span>(File)</span>
@@ -51,6 +50,7 @@
                     <span class="ellipsis">{{ thread.filename }}</span>
                 </div>
             {% endif %}
+            {% cache 500 post thread.pk %}
             <div class="row content">
                 {% if thread.image %}
                     {% thumbnail thread.image "x300" as im %}
@@ -72,7 +72,7 @@
         {% endfor %}
     </div>
     <div id="bottom"></div>
-    [<a href="{% url 'board' thread.board.ln %}" hx-boost="true">Return</a>]
+    [<a href="{{ thread.board.get_absolute_url }}" hx-boost="true">Return</a>]
     [<a href="{% url 'board-catalog' thread.board.ln %}" hx-boost="true">Catalog</a>]
     [<a href="#top">Top</a>]
     {% if not thread.closed %}

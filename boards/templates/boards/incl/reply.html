@@ -21,7 +21,6 @@
             {% endif %}
         </p>
     </div>
-    {% cache 500 post post.pk %}
     {% if post.image %}
         <div class="row info">
             <span>(File)</span>
@@ -30,6 +29,7 @@
             <span class="ellipsis">{{ post.filename }}</span>
         </div>
     {% endif %}
+    {% cache 500 post post.pk %}
     <div class="row content">
         {% if post.image %}
             {% thumbnail post.image "x300" as im %}

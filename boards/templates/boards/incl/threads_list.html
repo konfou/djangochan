@@ -22,7 +22,6 @@
                     {% endif %}
                 </p>
             </div>
-            {% cache 500 post thread.pk %}
             {% if thread.image %}
                 <div class="row info">
                     <span>(File)</span>
@@ -31,6 +30,7 @@
                     <span class="ellipsis">{{ thread.filename }}</span>
                 </div>
             {% endif %}
+            {% cache 500 post thread.pk %}
             <div class="row content">
                 {% if thread.image %}
                     {% thumbnail thread.image "x300" as im %}
@@ -47,7 +47,7 @@
             </div>
             {% endcache %}
             <p>[Replies: {{ thread.post_set.all.count }}]
-               [<a href="{% url 'thread' thread.board.ln thread.pk %}" hx-boost="true">Visit</a>]</p>
+               [<a href="{{ thread.get_absolute_url }}" hx-boost="true">Visit</a>]</p>
         </div>
         {% for post in replies %}
                 {% include 'boards/incl/reply.html' %}

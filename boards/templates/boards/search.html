@@ -10,7 +10,7 @@
             <p id="board-description">{{ board.decription }}</p>
         {% endif %}
     </div>
-    [<a href="{% url 'board' board.ln %}" hx-boost="true"
+    [<a href="{% board.get_absolute_url %}" hx-boost="true"
         hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
     <form hx-boost="true" id="searchform" method="post">{% csrf_token %}
         {{ form.as_p }}
@@ -31,21 +31,21 @@
                         </details>
                     </p>
                 </div>
+                {% if post.image %}
+                    <div class="row info">
+                        <span>(File)</span>
+                        <span>{{ post.image.size|filesizeformat }}</span> |
+                        <span>{{ post.image.width }}x{{ post.image.height }}</span> |
+                        <span class="ellipsis">{{ post.filename }}</span>
+                    </div>
+                {% endif %}
                 {% cache 500 post post.pk %}
+                <div class="row content">
                     {% if post.image %}
-                        <div class="row info">
-                            <span>(File)</span>
-                            <span>{{ post.image.size|filesizeformat }}</span> |
-                            <span>{{ post.image.width }}x{{ post.image.height }}</span> |
-                            <span class="ellipsis">{{ post.filename }}</span>
+                        {% thumbnail post.image "x300" as im %}
+                        <div class="one-third column">
+                            <span class="image"><a href="{{ post.image.url}}"><img src="{{ im.url }}"></a></span>
                         </div>
-                    {% endif %}
-                    <div class="row content">
-                        {% if post.image %}
-                            {% thumbnail post.image "x300" as im %}
-                            <div class="one-third column">
-                                <span class="image"><a href="{{ post.image.url}}"><img src="{{ im.url }}"></a></span>
-                            </div>
                             {% endthumbnail %}
                             <div class="two-thirds column">
                                 {% if post.thread %}
@@ -54,14 +54,14 @@
                                     <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
                                 {% endif %}
                             </div>
-                        {% else %}
+                    {% else %}
                             {% if post.thread %}
                                 <span class="post-text"><p>{% post_render post.thread.pk post.text %}</p></span>
                             {% else %}
                                 <span class="post-text"><p>{% post_render post.pk post.text %}</p></span>
                             {% endif %}
-                        {% endif %}
-                    </div>
+                    {% endif %}
+                </div>
                 {% endcache %}
             </div>
         {% endfor %}
