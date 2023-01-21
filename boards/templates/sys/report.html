@@ -7,8 +7,8 @@
     {% include 'sys/incl/post.html' %}
     <form hx-boost="true" class="reportpostform" id="reportpostform" method="post">{% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Submit">
-        <span class="text-submit">[<a href="#" onclick="document.getElementById('reportpostform').submit(); return false;">Report</a>]</span>
+        <button class="remove">Submit</button>
+        <span class="hide" id="text-submit">[<a href="#" onclick="document.getElementById('reportpostform').submit(); return false;">Report</a>]</span>
         <span>[<a href="{{ post.get_absolute_url }}" hx-boost="true">Abort</a>]</span>
     </form>
 {% endblock content %}

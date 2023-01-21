@@ -5,8 +5,8 @@
     {% include 'sys/incl/post.html' %}
     {% if not error %}
         <form hx-boost="true" class="deletepostform" id="deletepostform" method="post">{% csrf_token %}
-            <input type="submit" value="Submit">
-            <span class="text-submit">[<a href="#" onclick="document.getElementById('deletepostform').submit(); return false;">Delete</a>]</span>
+            <button class="remove">Submit</button>
+            <span class="hide" id="text-submit">[<a href="#" onclick="document.getElementById('deletepostform').submit(); return false;">Delete</a>]</span>
             <span>[<a href="{{ post.get_absolute_url }}" hx-boost="true">Abort</a>]</span>
         </form>
     {% else %}
