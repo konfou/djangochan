@@ -18,6 +18,12 @@ textarea {
     margin: 5px 5px 5px 5px;
 }
 
+/* generic */
+
+.hide {
+    visibility: hidden;
+}
+
 /* site types */
 
 #site-title {
@@ -26,11 +32,6 @@ textarea {
 #site-description {
     text-align: right;
     color: #092e20; /* django green */
-}
-
-#text-submit,
-#scrollback {
-    visibility: hidden;
 }
 
 /* post types */

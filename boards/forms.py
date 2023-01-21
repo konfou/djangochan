@@ -52,7 +52,3 @@ class ReportPostForm(forms.ModelForm):
         fields = [
             'reason'
         ]
-
-
-class SearchBoardForm(forms.Form):
-    search = forms.CharField()

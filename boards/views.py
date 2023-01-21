@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin, DeleteView
 
 from core.models import Board, Post
-from .forms import NewThreadForm, NewReplyForm, ReportPostForm, SearchBoardForm
+from .forms import NewThreadForm, NewReplyForm, ReportPostForm
 
 
 class IndexView(ListView):
@@ -76,6 +76,7 @@ class BoardCatalogView(BoardView):
         it = iter(it)
         return iter(lambda: tuple(islice(it, size)), ())
 
+    # FIX: this should be done dynamically in template
     def get_context_data(self, *args, **kwargs):
         context = super(BoardCatalogView, self).get_context_data(
             *args, **kwargs)
@@ -96,38 +97,36 @@ class BoardArchiveView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(BoardArchiveView, self).get_context_data(
             *args, **kwargs)
+        # only threads can be archived so no need to check if thread
         context['threads'] = self.object.post_set.filter(
             archived=True).order_by('-bump')
         return context
 
 
-class BoardSearchView(FormMixin, DetailView):
-    model = Board
+class BoardSearchView(ListView):
+    model = Post
     template_name = 'boards/search.html'
-    context_object_name = 'board'
-    slug_field = 'ln'
-    slug_url_kwarg = 'board'
-    form_class = SearchBoardForm
+    context_object_name = 'results'
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
+    def get_context_data(self, *args, **kwargs):
+        context = super(BoardSearchView, self).get_context_data(
+            *args, **kwargs)
+        context['board'] = Board.objects.get(ln=self.kwargs['board'])
+        return context
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        board = Board.objects.get(ln=self.kwargs['board'])
+        if query is None:
+            return Post.objects.none()
         else:
-            return self.form_invalid(form)
-
-    def get_results(self, query=None):
-        return Post.objects.filter(
-            Q(subject__icontains=query) |
-            Q(text__icontains=query) |
-            Q(filename__icontains=query)).order_by('-timestamp').all()
-
-    def form_valid(self, form):
-        query = form.cleaned_data['search']
-        results = self.get_results(query)
-        return render(self.request, self.template_name,
-                      {'board': self.object, 'search_results': results})
+            terms = query.split()
+            # keyword argument queries are "and"d together
+            return Post.objects.filter(board=board).filter(
+                *(Q(subject__icontains=x) |
+                  Q(text__icontains=x) |
+                  Q(filename__icontains=x) for x in terms)
+            ).order_by('-timestamp')
 
 
 class ThreadView(FormMixin, DetailView):

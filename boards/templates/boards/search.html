@@ -10,15 +10,16 @@
             <p id="board-description">{{ board.decription }}</p>
         {% endif %}
     </div>
-    [<a href="{% board.get_absolute_url %}" hx-boost="true"
+    [<a href="{{ board.get_absolute_url }}" hx-boost="true"
         hx-trigger="click, keyup[altKey&&key=='r'] from:body">Return</a>]
-    <form hx-boost="true" id="searchform" method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Submit">
-        <span class="text-submit">[<a href="#" onclick="document.getElementById('searchform').submit(); return false;">Submit</a>]</span>
+    <br>
+    <form id="searchform" class="info" method="get">
+        <input name="q" type="text" placeholder="Search...">
+        <button class="remove">Search</button>
+        <span class="hide" id="text-submit">[<a href="#" onclick="document.querySelector('#searchform').submit(); return false;">Search</a>]</span>
     </form>
-    {% if search_results %}
-        {% for post in search_results %}
+    {% if results %}
+        {% for post in results %}
             <div class="row post">
                 <div class="row headline" hx-boost="true">
                     <p><span class="author">{{ post.author }}</span>
@@ -65,5 +66,7 @@
                 {% endcache %}
             </div>
         {% endfor %}
+    {% else %}
+        <p>No search results.</p>
     {% endif %}
 {% endblock content %}
