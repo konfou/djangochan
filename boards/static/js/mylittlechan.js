@@ -34,8 +34,8 @@ function quote (pk) {
 
 function onBodyLoad () {
     try { // at board or thread
-        document.querySelector('button').remove();
-        document.getElementById('text-submit').style.visibility = 'visible';
+        document.querySelector('input[type=submit]').remove();
+        // document.getElementById('text-submit').style.visibility = 'visible';
     } catch (e) {} // at index
     replies = document.querySelectorAll('.reply');
     viewimage = document.querySelector('#viewimage');

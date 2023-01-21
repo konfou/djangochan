@@ -15,8 +15,8 @@
     <br>
     <form id="searchform" class="info" method="get">
         <input name="q" type="text" placeholder="Search...">
-        <button class="remove">Search</button>
-        <span class="hide" id="text-submit">[<a href="#" onclick="document.querySelector('#searchform').submit(); return false;">Search</a>]</span>
+        <input type="submit" value="Search">
+        <span id="text-submit">[<a href="#" onclick="document.querySelector('#searchform').submit(); return false;">Search</a>]</span>
     </form>
     {% if results %}
         {% for post in results %}
