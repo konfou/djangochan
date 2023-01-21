@@ -5,7 +5,7 @@
     <div class="row headline">
         <p>{% if post.subject %}<span class="subject">{{ post.subject }}</span>{% endif %}
             <span class="author">{{ post.author }}</span>
-            {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
+            {% if post.tripcode %}<span class='tripcode'>{% if thread.secure %}!{% endif %}!{{ post.tripcode }}</span>{% endif %}
             posted at {{ post.timestamp }}
             <span class="pk">#{{ post.pk }}</span>
         </p>

@@ -1,4 +1,5 @@
-import hashlib
+import crypt
+import re
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -8,11 +9,12 @@ from django.urls import reverse
 from django.utils import timezone
 from siteprofile.models import SiteProfileBase
 
+TRANS_TABLE = str.maketrans(":;<=>?@[\]^_`", "ABCDEFGabcdef")
+
 
 def img_path(instance, filename):
     ext = filename.rsplit('.')[-1]
-    # return 'i/{}/{}.{}'.format(instance.board, instance.pk, ext)
-    return 'img/{}.{}'.format(instance.pk, ext)
+    return f"{instance.board}/{instance.pk}.{ext}"
 
 
 # for siteprofile app
@@ -70,8 +72,12 @@ class Post(models.Model):
     # user provided
     author = models.CharField(max_length=32, default='Anonymous')
     tripcode = models.CharField(max_length=10, blank=True)
+    secure = models.BooleanField(default=False)
     subject = models.CharField(max_length=64, blank=True)
     text = models.TextField(blank=True)
+    text_rendered = models.TextField(blank=True)
+    # NOTE: updating img won't overwrite old one but save new
+    # not issue because image isn't meant to be modified
     image = models.ImageField(
         upload_to=img_path, verbose_name='Image', blank=True)
     filename = models.CharField(max_length=64, blank=True)
@@ -144,11 +150,17 @@ class Post(models.Model):
                 bottom.save()
 
         if not self.tripcode and '#' in self.author:
-            usr, pwd = self.author.rsplit('#')
-            hashpwd = hashlib.sha256(
-                self.author.encode('utf-8')).hexdigest()[:10]
+            usr, pwd = self.author.rsplit('#', 1)
+            # algo: https://github.com/ctrlcctrlv/tripkeys/blob/master/doc/2ch_tripcode_annotated.pl
+            salt = (pwd + 'H..')[1:3]
+            salt = re.sub('[^\.-z]', '.', salt)
+            salt = salt.translate(TRANS_TABLE)
+            if usr[-1] == '#':
+                salt = '$1$' + self.author + '$'
+                usr = usr[:-1]
+                self.secure = True
             self.author = usr
-            self.tripcode = hashpwd
+            self.tripcode = crypt.crypt(pwd, salt)[-10:]
 
         super(Post, self).save(*args, **kwargs)
 

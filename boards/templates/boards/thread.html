@@ -27,7 +27,7 @@
             <div class="row headline" hx-boost="true">
                 <p>{% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
                     <span class="author">{{ thread.author }}</span>
-                    {% if thread.tripcode %}<span class='tripcode'>!{{ thread.tripcode }}</span>{% endif %}
+                    {% if thread.tripcode %}<span class='tripcode'>{% if thread.secure %}!{% endif %}!{{ thread.tripcode }}</span>{% endif %}
                     posted at {{ thread.timestamp }}
                     {% if not thread.closed %}
                         <span class="pk"><a href="javascript:quote('{{ thread.pk }}');">#{{ thread.pk }}</a></span>

@@ -23,7 +23,7 @@
             <div class="row post">
                 <div class="row headline" hx-boost="true">
                     <p><span class="author">{{ post.author }}</span>
-                        {% if post.tripcode %}<span class='tripcode'>!{{ post.tripcode }}</span>{% endif %}
+                        {% if post.tripcode %}<span class='tripcode'>{% if post.secure %}!{% endif %}!{{ post.tripcode }}</span>{% endif %}
                         posted at {{ post.timestamp }}
                         <span class="pk"><a href="{{ post.get_absolute_url }}">#{{ post.pk }}</a></span>
                         <details><summary class="inline">[+]</summary>
